@@ -38,7 +38,7 @@ Install the `auth` middleware to d2lfetch via the `use` function and then start 
 ```js
 window.d2lfetch.use(window.d2lfetch.auth);
 
-window.d2lfetch.fetch(new Request('http://example.com/api/someentity/'))
+window.d2lfetch.fetch(new Request('http://example.com/api/entity/1'))
 	.then(function(response) {
 		// do something with the response
 	});
