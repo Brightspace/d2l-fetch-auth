@@ -22,6 +22,13 @@ Reference the script in your html after your reference to `d2l-fetch` (see [here
 <script src="../dist/d2lfetch-auth.js"></script>
 ```
 
+Alternatively, if you are making requests from within the context of an iFramed Free Range Application (iFRA), reference the framed script:
+
+```html
+<script src="https://s.brightspace.com/lib/d2lfetch/0.2.0/d2lfetch.js"></script>
+<script src="../dist/d2lfetch-auth-framed.js"></script>
+```
+
 This will add the `auth` middleware function to the `d2lfetch` object.
 
 ### Auth
@@ -30,17 +37,6 @@ Install the `auth` middleware to d2lfetch via the `use` function and then start 
 
 ```js
 window.d2lfetch.use(window.d2lfetch.auth);
-
-window.d2lfetch.fetch(new Request('http://example.com/api/someentity/'))
-	.then(function(response) {
-		// do something with the response
-	});
-```
-
-Applications operating within an iFrame should `use` the authFramed function instead:
-
-```js
-window.d2lfetch.use(window.d2lfetch.authFramed);
 
 window.d2lfetch.fetch(new Request('http://example.com/api/someentity/'))
 	.then(function(response) {
