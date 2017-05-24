@@ -7,7 +7,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "postinstall": "bower install",
-    "build": "webpack",
+    "build": "webpack -p",
     "pretest": "npm run build",
     "test:lint": "eslint src/ test/ --ext .js",
     "test:no-lint": "cross-env LAUNCHPAD_BROWSERS=firefox wct --skip-plugin sauce -p",
@@ -22,7 +22,7 @@
       "moduleType": "lib",
       "targetDirectory": "d2lfetch-auth",
       "creds": {
-        "key": "AKIAJ32HJEFOAO2L7B7A",
+        "key": "AKIAI2Z7AUDCZQ4V4KZA",
         "secretVar": "CDN_SECRET"
       },
       "devTagVar": "TRAVIS_COMMIT",
