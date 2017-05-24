@@ -1,0 +1,25 @@
+{
+  "name": "d2l-fetch-auth",
+  "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
+  "main": "index.js",
+  "authors": [
+    "D2L Corporation"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "fetch",
+    "middleware",
+    "auth"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "web-component-tester": "^6.0.0"
+  }
+}
