@@ -14,6 +14,10 @@ export class D2LFetchAuth {
 
 		next = next || function(r) { return Promise.resolve(r); };
 
+		if (request.headers.get('Authorization')) {
+			return next(request);
+		}
+
 		if (this._isRelativeUrl(request.url)) {
 			request = new Request(request, {
 				credentials: 'same-origin'

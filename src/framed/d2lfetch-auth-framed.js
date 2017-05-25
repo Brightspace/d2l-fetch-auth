@@ -9,6 +9,10 @@ export class D2LFetchAuthFramed {
 
 		next = next || function(r) { return Promise.resolve(r); };
 
+		if (request.headers.get('Authorization')) {
+			return next(request);
+		}
+
 		return this._getToken('*:*:*')
 			.then(function(token) {
 				const headers = { 'Authorization': `Bearer ${token}` };

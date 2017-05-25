@@ -79,6 +79,15 @@ describe('d2l-fetch-auth', function() {
 			});
 		});
 
+		it('should not replace an existing authorization header', function() {
+			var token = 'this is a custom token from this do not replace auth header test';
+			var request = new Request('path/to/data', { headers: { authorization: token } });
+			return window.d2lfetch.auth(request)
+				.then(function(output) {
+					expect(output.headers.get('Authorization')).to.equal(token);
+				});
+		});
+
 		it('should call the next function if provided', function() {
 			var next = sandbox.stub().returns(Promise.resolve());
 			return window.d2lfetch.auth(getRequest('/path/to/data'), next)
