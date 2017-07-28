@@ -1,6 +1,6 @@
 {
   "name": "d2l-fetch-auth",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
   "main": "index.js",
   "author": "D2L Corporation",
