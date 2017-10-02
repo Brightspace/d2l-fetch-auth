@@ -29,7 +29,18 @@ Alternatively, if you are making requests from within the context of an iFramed 
 <script src="../dist/d2lfetch-auth-framed.js"></script>
 ```
 
-This will add the `auth` middleware function to the `d2lfetch` object.
+This will add the `auth` middleware function to the `d2lfetch` object. Alternatively, you can install `d2l-fetch-auth` via bower:
+
+```sh
+bower install Brightspace/d2l-fetch-auth
+```
+
+and reference it as you would any other bower package:
+
+```html
+<link rel="import" href="../d2l-fetch-auth/d2l-fetch-auth.html">
+<link rel="import" href="../d2l-fetch-auth/d2l-fetch-auth-framed.html">
+```
 
 ### Auth
 
