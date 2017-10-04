@@ -1,6 +1,5 @@
 {
   "name": "d2l-fetch-auth",
-  "version": "0.6.0",
   "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
   "main": "index.js",
   "author": "D2L Corporation",
@@ -38,7 +37,6 @@
     "eslint": "^3.19.0",
     "eslint-config-brightspace": "^0.2.4",
     "eslint-plugin-html": "^2.0.1",
-    "frau-ci": "^1.33.0",
     "frau-publisher": "^2.6.2",
     "peanut-gallery": "^1.2.0",
     "web-component-tester": "^6.0.0",

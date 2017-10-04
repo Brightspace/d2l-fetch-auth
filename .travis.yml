@@ -4,10 +4,9 @@ script:
 - npm run build
 - npm run test:lint
 - wct --skip-plugin local
-- 'if [ "$TRAVIS_BRANCH" == "master" ]; then frauci-update-version && export TRAVIS_TAG=$(frauci-get-version) && npm run build && npm run publish-release; fi'
+- ./update.sh
 env:
   global:
-  - REPO_NAME=d2l-fetch-auth
   # SAUCE_USERNAME
   - secure: PAi0SiC2fng8OzZGqy6g5zlUhjgYcCGIvwxi0EBFjnZXqznQ2uvBqQia5egbWxMAW7nt7APNJQByHcB/Ygtg2AB7kBxTu8nas9qDrwxD1/31liga+cSKbneigV8GQtacMGEa4Lr3jsABF0kzX4PaRCwbzmOkZAVjkrK6ay/XaMSXhgkCkW6T4MYcZ59PgdSaoNemPf6aRRnGE+KpK5Y3Ee+UkcTAqjxwF+xfF3dC63bu42hteRFFL9G4jvXcP6vmqFosbfMYIfNeFXV9KIDM4hnmpyui7pqleiqHJWEF3ivhqSTfrwAsOUKWqtMNeQB4FWvH3SQTzYV6cdmLXWhG/6f0u2jj+ET2wkgHyojRQjMB6uTGG8jKWesScJuudoF+Vgc84NKiQ69aI58p1zEjPgRWoaMNOXDWO2vdBBTTOXgdXoc3BHTAVnpzNNina90k7NqplBxMSn8kkqExrm3nWnm5RZjHlVhHTI8laeIynkUdEMBpE7AHwcMwM+AKSQ1g2nAe0ZiZrqzrrujwxr1JYfZcVc7yrX0FiGIoVVE4fFelgk+a3dsQpytlK9NUWrtlnwwv8J/GUCCwql+MZE/AKZfd1mXof/m0TVdKsdPaaDeKSrp44W2Z49tTulbUgBfCZZMXuK++C+odKlMPYccAJoKyOQ2NfXshTICJB/EVF3w=
   # CDN_SECRET
