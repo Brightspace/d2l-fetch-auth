@@ -154,7 +154,7 @@ describe('D2LFetchAuth class internals', function() {
 			d2lFetchAuth._getAuthToken()
 				.then(function(token) {
 					expect(token).to.equal(alternativeToken.access_token);
-					d2lFetchAuth._onSessionChanged({ key: 'Session.UserId' });
+					d2lFetchAuth._onStorage({ key: 'Session.UserId' });
 					d2lFetchAuth._getAuthToken()
 						.then(function(token) {
 							expect(token).to.equal(authToken.access_token);

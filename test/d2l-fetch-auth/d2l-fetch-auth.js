@@ -12,16 +12,21 @@ var invalidRequestInputs = [
 describe('d2l-fetch-auth', function() {
 
 	var sandbox,
-		authToken = {
-			access_token: 'such access wow',
-			expires_at: Number.MAX_VALUE
-		},
+		authToken = createTokenForUser('169'),
 		xsrfTokenKey = 'XSRF.Token',
 		xsrfTokenValue = 'foo',
+		localStorageKey = 'D2L.Fetch.Tokens',
 		authTokenResponse = {
 			headers: { 'x-csrf-token': xsrfTokenValue },
 			body: { access_token: authToken.access_token, expires_at: authToken.expires_at }
 		};
+
+	function createTokenForUser(userId) {
+		return {
+			access_token: 'part1.' + btoa(JSON.stringify({ sub: userId })) + '.part3',
+			expires_at: Number.MAX_VALUE
+		};
+	}
 
 	function clearXsrfToken() {
 		window.localStorage.removeItem(xsrfTokenKey);
@@ -29,6 +34,11 @@ describe('d2l-fetch-auth', function() {
 
 	function setXsrfToken(value) {
 		window.localStorage.setItem(xsrfTokenKey, value);
+	}
+
+	function clearTokenCache() {
+		window.localStorage.removeItem('Session.UserId');
+		window.localStorage.removeItem(localStorageKey);
 	}
 
 	function getRelativeGETRequest() {
@@ -47,6 +57,19 @@ describe('d2l-fetch-auth', function() {
 		return new Request('/path/to/data', { headers: { Accept: 'application/vnd.siren+json', 'X-My-Header': 'my value' } });
 	}
 
+	function setupAuthTokenResponse() {
+		window.fetch
+			.withArgs(sinon.match.has('method', 'POST'))
+			.returns(
+				Promise.resolve(
+					new Response(
+						JSON.stringify(authTokenResponse.body),
+						{ status: 200, referrerToken: xsrfTokenValue }
+					)
+				)
+			);
+	}
+
 	beforeEach(function() {
 		sandbox = sinon.sandbox.create();
 		setXsrfToken(xsrfTokenValue);
@@ -55,6 +78,7 @@ describe('d2l-fetch-auth', function() {
 
 	afterEach(function() {
 		clearXsrfToken();
+		clearTokenCache();
 		sandbox.restore();
 	});
 
@@ -131,17 +155,7 @@ describe('d2l-fetch-auth', function() {
 		});
 
 		it('should resolve to a request with auth header when url is absolute', function() {
-			window.fetch
-				.withArgs(sinon.match.has('method', 'POST'))
-				.returns(
-					Promise.resolve(
-						new Response(
-							JSON.stringify(authTokenResponse.body),
-							{ status: 200, referrerToken: xsrfTokenValue }
-						)
-					)
-				);
-
+			setupAuthTokenResponse();
 			return window.d2lfetch.auth(getAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken.access_token);
@@ -215,6 +229,97 @@ describe('d2l-fetch-auth', function() {
 				})
 				.catch(function() {
 					done();
+				});
+		});
+
+		it('should not store auth token in localStorage by default', function() {
+			setupAuthTokenResponse();
+			return window.d2lfetch.auth(getAbsolutePathGETRequest())
+				.then(function() {
+					const cachedValue = window.localStorage.getItem(localStorageKey);
+					expect(cachedValue).to.be.null;
+				});
+		});
+
+		it('should store auth token in localStorage when asked', function() {
+			window.localStorage.setItem('Session.UserId', '169');
+			setupAuthTokenResponse();
+			return window.d2lfetch.auth(
+					getAbsolutePathGETRequest(),
+					undefined, {
+						enableTokenCache: true,
+						_resetLocalCache: true
+					}
+				).then(function() {
+					const cachedValue = JSON.parse(
+						window.localStorage.getItem(localStorageKey)
+					);
+					expect(cachedValue['*:*:*']).to.eql(authToken);
+				});
+		});
+
+		it('should not use cached token if it\'s for the wrong user', function() {
+			window.localStorage.setItem('Session.UserId', '169');
+			window.localStorage.setItem(
+				localStorageKey,
+				JSON.stringify(
+					{
+						'*:*:*': createTokenForUser('123')
+					}
+				)
+			);
+			setupAuthTokenResponse();
+			return window.d2lfetch.auth(
+					getAbsolutePathGETRequest(),
+					undefined, {
+						enableTokenCache: true,
+						_resetLocalCache: true
+					}
+				).then(function() {
+					const expected = JSON.stringify({
+						'*:*:*': createTokenForUser('169')
+					});
+					expect(window.localStorage.getItem(localStorageKey)).to.eql(expected);
+				});
+		});
+
+		it('should remove cached token when user changes', function() {
+			try {
+				new StorageEvent('storage');
+			} catch (e) {
+				// Edge doesn't like custom StorageEvents, so skip the test for now
+				return;
+			}
+			window.localStorage.setItem('Session.UserId', '169');
+			window.localStorage.setItem(localStorageKey, 'bad value');
+			setupAuthTokenResponse();
+			return window.d2lfetch.auth(
+					getAbsolutePathGETRequest(),
+					undefined, {
+						enableTokenCache: true,
+						_resetLocalCache: true
+					}
+				).then(function() {
+					var e = new StorageEvent('storage');
+					e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123');
+					window.dispatchEvent(e);
+					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
+				});
+		});
+
+		it('should remove cached token when user logs out', function() {
+			window.localStorage.setItem('Session.UserId', '169');
+			window.localStorage.setItem(localStorageKey, 'bad value');
+			setupAuthTokenResponse();
+			return window.d2lfetch.auth(
+					getAbsolutePathGETRequest(),
+					undefined, {
+						enableTokenCache: true,
+						_resetLocalCache: true
+					}
+				).then(function() {
+					window.dispatchEvent(new CustomEvent('d2l-logout'));
+					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
 				});
 		});
 
