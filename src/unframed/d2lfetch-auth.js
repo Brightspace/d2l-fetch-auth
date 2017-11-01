@@ -1,10 +1,13 @@
 const D2L_FETCH_CACHED_TOKENS = {},
-	D2L_FETCH_IN_FLIGHT_REQUESTS = {};
+	D2L_FETCH_IN_FLIGHT_REQUESTS = {},
+	STORAGE_NAME = 'D2L.Fetch.Tokens';
 
 export class D2LFetchAuth {
 
 	constructor() {
 		window.addEventListener('storage', this._onSessionChanged.bind(this));
+		window.addEventListener('d2l-logout', this._onLogout.bind(this));
+		this._enableTokenCache = false;
 	}
 
 	wrap(request, next) {
@@ -99,14 +102,12 @@ export class D2LFetchAuth {
 		return Promise
 			.resolve()
 			.then(function() {
-				const cached = D2L_FETCH_CACHED_TOKENS[scope];
-
+				const cached = this._tryGetCachedToken(scope);
 				if (cached) {
 					if (!this._tokenExpired(cached)) {
 						return cached.access_token;
 					}
-
-					delete D2L_FETCH_CACHED_TOKENS[scope];
+					this._clearCachedToken(scope);
 				}
 				throw new Error('No cached token');
 			}.bind(this));
@@ -162,9 +163,34 @@ export class D2LFetchAuth {
 
 	_cacheToken(scope, token) {
 		D2L_FETCH_CACHED_TOKENS[scope] = token;
+		if (this._localStorageSupported()) {
+			window.localStorage.setItem(STORAGE_NAME, JSON.stringify(D2L_FETCH_CACHED_TOKENS));
+		}
+	}
+
+	_tryGetCachedToken(scope) {
+
+		if (!this._localStorageSupported()) {
+			return D2L_FETCH_CACHED_TOKENS[scope];
+		}
+
+		const storageVal = JSON.parse(window.localStorage.getItem(STORAGE_NAME));
+		if (storageVal && storageVal[scope]) {
+			return storageVal[scope];
+		}
+
+		return null;
+
 	}
 
 	_tokenExpired(token) {
+		if (this._localStorageSupported()) {
+			const currentUserId = window.localStorage.getItem('Session.UserId');
+			const tokenUserId = this._tryGetUserIdFromToken(token);
+			if (tokenUserId === null || currentUserId !== tokenUserId) {
+				return true;
+			}
+		}
 		return this._clock() > token.expires_at;
 	}
 
@@ -183,14 +209,28 @@ export class D2LFetchAuth {
 		}
 	}
 
+	_onLogout() {
+		this._resetAuthTokenCaches();
+	}
+
 	_resetAuthTokenCaches() {
-		this._clearCachedTokens();
+		this._clearAllCachedTokens();
 		this._clearInFlightRequests();
 	}
 
-	_clearCachedTokens() {
+	_clearAllCachedTokens() {
 		for (const i in D2L_FETCH_CACHED_TOKENS) {
 			delete D2L_FETCH_CACHED_TOKENS[i];
+		}
+		if (this._localStorageSupported()) {
+			window.localStorage.removeItem(STORAGE_NAME);
+		}
+	}
+
+	_clearCachedToken(scope) {
+		delete D2L_FETCH_CACHED_TOKENS[scope];
+		if (this._localStorageSupported()) {
+			window.localStorage.setItem(STORAGE_NAME, JSON.stringify(D2L_FETCH_CACHED_TOKENS));
 		}
 	}
 
@@ -233,5 +273,31 @@ export class D2LFetchAuth {
 			});
 
 		return request;
+	}
+
+	_tryGetUserIdFromToken(token) {
+
+		const parts = token.access_token.split('.');
+		if (parts.length !== 3) return null;
+
+		try {
+			const decoded = JSON.parse(atob(parts[1]));
+			const userId = decoded.sub;
+			return userId;
+		} catch (e) {
+			return null;
+		}
+
+	}
+
+	_localStorageSupported() {
+		if (!this._enableTokenCache) return false;
+		try {
+			window.localStorage.setItem('supported', '1');
+			window.localStorage.removeItem('supported');
+			return true;
+		} catch (error) {
+			return false;
+		}
 	}
 }
