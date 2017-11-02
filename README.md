@@ -1,5 +1,5 @@
 # d2l-fetch-auth
-Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch
+Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch.
 
 ## Setup
 
