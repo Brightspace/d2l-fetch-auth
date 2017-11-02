@@ -174,10 +174,12 @@ export class D2LFetchAuth {
 			return D2L_FETCH_CACHED_TOKENS[scope];
 		}
 
-		const storageVal = JSON.parse(window.localStorage.getItem(STORAGE_NAME));
-		if (storageVal && storageVal[scope]) {
-			return storageVal[scope];
-		}
+		try {
+			const storageVal = JSON.parse(window.localStorage.getItem(STORAGE_NAME));
+			if (storageVal && storageVal[scope]) {
+				return storageVal[scope];
+			}
+		} catch (e) { /* oh well */ }
 
 		return null;
 
