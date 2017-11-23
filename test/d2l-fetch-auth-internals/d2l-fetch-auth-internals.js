@@ -127,6 +127,45 @@ describe('D2LFetchAuth class internals', function() {
 				});
 		});
 
+		it('should account for server clock skew when deciding if a token is expired', function() {
+			// put the server ~10 minutes ahead
+			const skew = 10 * 60;
+			setupResponse();
+
+			// call once to get clock skew calculation
+			return d2lFetchAuth
+				._getAuthToken()
+				.then(() => {
+					// overwrite the, what would be now cached token
+					// the expiry value of this token wouldn't normally be considered expired
+					// but the skew should push it over
+					d2lFetchAuth._cacheToken(defaultScope, {
+						access_token: 'token',
+						expires_at: clock() + Math.round(skew / 2)
+					});
+
+					setupResponse();
+					return d2lFetchAuth
+						._getAuthToken()
+						.then(authToken => {
+							expect(window.fetch.args[0][0].url).to.have.string('/d2l/lp/auth/oauth2/token');
+							expect(authToken).to.equal(authTokenResponse.body.access_token);
+						});
+				});
+
+			function setupResponse() {
+				const serverDateString = new Date((clock() + skew) * 1000).toUTCString();
+				window.fetch.returns(
+					Promise.resolve(
+						new Response(
+							JSON.stringify(authTokenResponse.body),
+							{ status: 200, headers: { Date: serverDateString } }
+						)
+					)
+				);
+			}
+		});
+
 		it('should use cached auth token if it exists', function() {
 			d2lFetchAuth._cacheToken(defaultScope, authToken);
 			return d2lFetchAuth._getAuthToken()

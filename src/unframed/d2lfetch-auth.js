@@ -2,6 +2,8 @@ const D2L_FETCH_CACHED_TOKENS = {},
 	D2L_FETCH_IN_FLIGHT_REQUESTS = {},
 	STORAGE_NAME = 'D2L.Fetch.Tokens';
 
+let D2L_FETCH_CLOCK_SKEW = 0;
+
 export class D2LFetchAuth {
 
 	constructor() {
@@ -145,6 +147,10 @@ export class D2LFetchAuth {
 			);
 
 			return window.fetch(request)
+				.then(response => {
+					this._adjustClockSkew(response);
+					return response;
+				})
 				.then(function(response) {
 					if (!response.ok) {
 						throw Error(response.statusText);
@@ -158,6 +164,28 @@ export class D2LFetchAuth {
 
 		return self._getXsrfToken()
 			.then(authTokenRequest);
+	}
+
+	_adjustClockSkew(response) {
+		try {
+			const dateHeader = response.headers.get('Date');
+			if (!dateHeader) {
+				return;
+			}
+
+			let serverTime = new Date(dateHeader).getTime();
+			// getTime() will return NaN when dateHeader wasn't parseable and
+			// this is faster than isNaN
+			if (serverTime !== serverTime) {
+				return;
+			}
+
+			serverTime = Math.round(serverTime / 1000);
+
+			const currentTime = this._clock();
+
+			D2L_FETCH_CLOCK_SKEW = serverTime - currentTime;
+		} catch (e) { /* nowhere good to log */ }
 	}
 
 	_cacheToken(scope, token) {
@@ -194,7 +222,7 @@ export class D2LFetchAuth {
 	}
 
 	_tokenExpired(token) {
-		return this._clock() > token.expires_at;
+		return this._clock() + D2L_FETCH_CLOCK_SKEW > token.expires_at;
 	}
 
 	_clock() {
