@@ -62,3 +62,7 @@ window.d2lfetch.fetch(new Request('http://example.com/api/entity/1'))
 We recommend:
 
 * [promise-polyfill](https://github.com/PolymerLabs/promise-polyfill/)
+
+## Publishing
+
+The application will automatically increment the minor build version and publish a release version to the Brightspace CDN after merge to the `master` branch is complete. If you wish to increment the `patch` or `major` version instead please add **[increment patch]** or **[increment major]** to the notes inside your merge message.
