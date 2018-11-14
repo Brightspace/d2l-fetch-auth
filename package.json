@@ -9,7 +9,7 @@
     "build": "webpack -p",
     "pretest": "npm run build",
     "test:lint": "eslint src/ test/ --ext .js",
-    "test:no-lint": "cross-env LAUNCHPAD_BROWSERS=firefox wct --skip-plugin sauce -p",
+    "test:no-lint": "cross-env LAUNCHPAD_BROWSERS=firefox polymer test --skip-plugin sauce -p",
     "test": "npm run test:lint && npm run test:no-lint",
     "publish-location": "node publishLocation",
     "prepublish-release": "npm run build",
@@ -38,7 +38,7 @@
     "eslint-config-brightspace": "^0.2.4",
     "eslint-plugin-html": "^2.0.1",
     "frau-publisher": "^2.6.2",
-    "web-component-tester": "^6.0.0",
+    "polymer-cli": "^1.9.0",
     "webpack": "^2.4.1"
   },
   "dependencies": {
