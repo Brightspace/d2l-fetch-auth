@@ -301,7 +301,7 @@ describe('d2l-fetch-auth', function() {
 					}
 				).then(function() {
 					var e = new StorageEvent('storage');
-					e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123');
+					e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123', window.location.href, window.sessionStorage);
 					window.dispatchEvent(e);
 					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
 				});
