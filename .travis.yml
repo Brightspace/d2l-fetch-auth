@@ -5,8 +5,8 @@ addons:
 script:
 - npm run build
 - npm run test:lint
-- xvfb-run wct --skip-plugin sauce
-- 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then wct --skip-plugin local; fi'
+- xvfb-run polymer test --skip-plugin sauce
+- 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then polymer test --skip-plugin local; fi'
 - ./update.sh
 env:
   global:

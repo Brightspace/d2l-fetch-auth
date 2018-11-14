@@ -41,6 +41,9 @@ export class D2LFetchAuth {
 		return this._getAuthToken()
 			.then(function(token) {
 				const headers = { 'Authorization': `Bearer ${token}` };
+				request = new Request(request, {
+					credentials: 'omit'
+				});
 				return next(this._getRequest(request, headers));
 			}.bind(this));
 	}
