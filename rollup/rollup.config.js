@@ -4,8 +4,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import babel from 'rollup-plugin-babel';
 
-const config = (name, path, output, filename) => ({
-	input: `${path}/${filename}.js`,
+const config = (name, input, output) => ({
+	input,
 	plugins: [
 		resolve({
 			browser: true
@@ -26,8 +26,8 @@ const config = (name, path, output, filename) => ({
 });
 
 export default [
-	config('d2lfetch.auth', './src/unframed', './dist/d2lfetch-auth.js', 'index'),
-	config('d2lfetch.auth', './src/framed', './dist/d2lfetch-auth-framed.js', 'index'),
-	config('d2lfetch', './src/unframed', './test/dist/d2lfetch-auth.internals.js', 'd2lfetch-auth'),
-	config('d2lfetch', './src/framed', './test/dist/d2lfetch-auth.framedInternals.js', 'd2lfetch-auth-framed')
+	config('d2lfetch.auth', './src/unframed/index.js', './dist/d2lfetch-auth.js'),
+	config('d2lfetch.auth', './src/framed/index.js', './dist/d2lfetch-auth-framed.js'),
+	config('d2lfetch', './src/unframed/d2lfetch-auth.js', './test/dist/d2lfetch-auth.internals.js'),
+	config('d2lfetch', './src/framed/d2lfetch-auth-framed.js', './test/dist/d2lfetch-auth.framedInternals.js')
 ];
