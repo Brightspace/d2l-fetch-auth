@@ -46,21 +46,12 @@ git checkout upstream/master
 git config --global user.email "travis@travis-ci.com"
 git config --global user.name "Travis CI"
 
-echo "Updating from ${lastVersion} to ${newVersion}"
-echo "<!-- CHANGES TO THIS FILE WILL BE LOST - IT IS AUTOMATICALLY GENERATED WHEN d2l-fetch-auth IS RELEASED -->" > d2l-fetch-auth.html
-echo "<script src=\"https://s.brightspace.com/lib/d2lfetch-auth/"$newVersion"/d2lfetch-auth.js\"></script>" >> d2l-fetch-auth.html
-echo "<!-- CHANGES TO THIS FILE WILL BE LOST - IT IS AUTOMATICALLY GENERATED WHEN d2l-fetch-auth IS RELEASED -->" > d2l-fetch-auth-framed.html
-echo "<script src=\"https://s.brightspace.com/lib/d2lfetch-auth/"$newVersion"/d2lfetch-auth-framed.js\"></script>" >> d2l-fetch-auth-framed.html
-
-# Add the updated d2l-fetch-auth.html, and add a new tag to create the release
-git add .
-git commit -m "[skip ci] Update to ${newVersion}"
-git tag -a ${newVersion} -m "${newVersion} - ${lastLogMessageShort}"
+npm version ${newVersion} -m "[skip ci] Update to %s"
 
 git status
 
 git push upstream HEAD:master --tags
 
 # Publish the release via frau-publisher
-export TRAVIS_TAG=$newVersion
-npm run publish-release
+# export TRAVIS_TAG=$newVersion
+# npm run publish-release

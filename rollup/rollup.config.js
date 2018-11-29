@@ -1,7 +1,6 @@
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import resolve from 'rollup-plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
 
 const config = (name, input, output) => ({
 	input,
@@ -10,11 +9,10 @@ const config = (name, input, output) => ({
 			browser: true
 		}),
 		commonjs(),
-		json(),
-		terser()
+		json()
 	],
 	output: {
-		file: `${output}`,
+		file: output,
 		format: 'esm',
 		name,
 		sourcemap: true
