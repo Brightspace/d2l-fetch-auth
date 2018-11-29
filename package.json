@@ -1,4 +1,5 @@
 {
+  "version": "1.0.0",
   "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
   "keywords": [
     "fetch",
@@ -35,7 +36,6 @@
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0"
   },
-  "version": "",
   "resolutions": {
     "inherits": "2.0.3",
     "samsam": "1.1.3",
