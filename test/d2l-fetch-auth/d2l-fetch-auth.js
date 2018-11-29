@@ -1,4 +1,4 @@
-'use strict';
+import auth from '../../dist/d2lfetch-auth.js';
 
 var invalidRequestInputs = [
 	undefined,
@@ -93,12 +93,12 @@ describe('d2l-fetch-auth', function() {
 	describe('.auth', function() {
 
 		it('should be a function on the d2lfetch object', function() {
-			expect(window.d2lfetch.auth instanceof Function).to.equal(true);
+			expect(auth instanceof Function).to.equal(true);
 		});
 
 		invalidRequestInputs.forEach(function(input) {
 			it('should throw a TypeError if it is not passed a Request object', function() {
-				return window.d2lfetch.auth(input)
+				return auth(input)
 					.then((function() { expect.fail(); }), function(err) { expect(err instanceof TypeError).to.equal(true); });
 			});
 		});
@@ -106,7 +106,7 @@ describe('d2l-fetch-auth', function() {
 		it('should not replace an existing authorization header', function() {
 			var token = 'this is a custom token from this do not replace auth header test';
 			var request = new Request('path/to/data', { headers: { authorization: token } });
-			return window.d2lfetch.auth(request)
+			return auth(request)
 				.then(function(output) {
 					expect(output.headers.get('Authorization')).to.equal(token);
 				});
@@ -114,7 +114,7 @@ describe('d2l-fetch-auth', function() {
 
 		it('should call the next function if provided', function() {
 			var next = sandbox.stub().returns(Promise.resolve());
-			return window.d2lfetch.auth(getRequest('/path/to/data'), next)
+			return auth(getRequest('/path/to/data'), next)
 				.then(function() {
 					expect(next).to.be.called;
 				});
@@ -122,14 +122,14 @@ describe('d2l-fetch-auth', function() {
 
 		it('should return a promise resolved to a request if next is not provided', function() {
 			var request = getRequest('/path/to/data');
-			return window.d2lfetch.auth(request)
+			return auth(request)
 				.then(function(output) {
 					expect(output).to.be.an.instanceOf(Request);
 				});
 		});
 
 		it('should resolve to a request with no auth header when url is relative', function() {
-			return window.d2lfetch.auth(getRelativeGETRequest())
+			return auth(getRelativeGETRequest())
 				.then(function(req) {
 					expect(req.method).to.equal('GET');
 					expect(req.headers.get('authorization')).to.not.be.defined;
@@ -146,7 +146,7 @@ describe('d2l-fetch-auth', function() {
 					)
 				));
 
-			return window.d2lfetch.auth(getRelativePUTRequest())
+			return auth(getRelativePUTRequest())
 				.then(function(req) {
 					expect(req.method).to.equal('PUT');
 					expect(req.headers.get('x-csrf-token')).to.equal(xsrfTokenValue);
@@ -156,14 +156,14 @@ describe('d2l-fetch-auth', function() {
 
 		it('should resolve to a request with auth header when url is absolute', function() {
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(getAbsolutePathGETRequest())
+			return auth(getAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken.access_token);
 				});
 		});
 
 		it('should include specified headers in the request', function() {
-			return window.d2lfetch.auth(getCustomHeadersGETRequest())
+			return auth(getCustomHeadersGETRequest())
 				.then(function(req) {
 					expect(req.headers.get('accept')).to.equal('application/vnd.siren+json');
 					expect(req.headers.get('x-my-header')).to.equal('my value');
@@ -171,14 +171,14 @@ describe('d2l-fetch-auth', function() {
 		});
 
 		it('should set the credentials value of the request to same-origin when the url is relative', function() {
-			return window.d2lfetch.auth(getRelativeGETRequest())
+			return auth(getRelativeGETRequest())
 				.then(function(req) {
 					expect(req.credentials).to.equal('same-origin');
 				});
 		});
 
 		it('should not set the credentials value of the request to same-origin when the url is absolute', function() {
-			return window.d2lfetch.auth(getAbsolutePathGETRequest())
+			return auth(getAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.credentials).to.equal('omit');
 				});
@@ -200,7 +200,7 @@ describe('d2l-fetch-auth', function() {
 					)
 				);
 
-			window.d2lfetch.auth(getAbsolutePathGETRequest())
+			auth(getAbsolutePathGETRequest())
 				.then(function() {
 					expect.fail();
 				})
@@ -223,7 +223,7 @@ describe('d2l-fetch-auth', function() {
 					)
 				);
 
-			window.d2lfetch.auth(getAbsolutePathGETRequest())
+			auth(getAbsolutePathGETRequest())
 				.then(function() {
 					expect.fail();
 				})
@@ -234,7 +234,7 @@ describe('d2l-fetch-auth', function() {
 
 		it('should not store auth token in localStorage by default', function() {
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(getAbsolutePathGETRequest())
+			return auth(getAbsolutePathGETRequest())
 				.then(function() {
 					const cachedValue = window.localStorage.getItem(localStorageKey);
 					expect(cachedValue).to.be.null;
@@ -244,7 +244,7 @@ describe('d2l-fetch-auth', function() {
 		it('should store auth token in localStorage when asked', function() {
 			window.localStorage.setItem('Session.UserId', '169');
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(
+			return auth(
 					getAbsolutePathGETRequest(),
 					undefined, {
 						enableTokenCache: true,
@@ -269,7 +269,7 @@ describe('d2l-fetch-auth', function() {
 				)
 			);
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(
+			return auth(
 					getAbsolutePathGETRequest(),
 					undefined, {
 						enableTokenCache: true,
@@ -293,7 +293,7 @@ describe('d2l-fetch-auth', function() {
 			window.localStorage.setItem('Session.UserId', '169');
 			window.localStorage.setItem(localStorageKey, 'bad value');
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(
+			return auth(
 					getAbsolutePathGETRequest(),
 					undefined, {
 						enableTokenCache: true,
@@ -311,7 +311,7 @@ describe('d2l-fetch-auth', function() {
 			window.localStorage.setItem('Session.UserId', '169');
 			window.localStorage.setItem(localStorageKey, 'bad value');
 			setupAuthTokenResponse();
-			return window.d2lfetch.auth(
+			return auth(
 					getAbsolutePathGETRequest(),
 					undefined, {
 						enableTokenCache: true,

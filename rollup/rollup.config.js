@@ -2,7 +2,6 @@ import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-import babel from 'rollup-plugin-babel';
 
 const config = (name, input, output) => ({
 	input,
@@ -12,14 +11,11 @@ const config = (name, input, output) => ({
 		}),
 		commonjs(),
 		json(),
-		babel({
-			presets: ['@babel/preset-env']
-		}),
 		terser()
 	],
 	output: {
 		file: `${output}`,
-		format: 'umd',
+		format: 'esm',
 		name,
 		sourcemap: true
 	}
