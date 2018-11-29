@@ -3,7 +3,7 @@ node_js: stable
 addons:
   firefox: latest
 script:
-- npm run build
+- npm run pretest
 - npm run test:lint
 - xvfb-run npm run test:polymer:local
 - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then npm run test:polymer:sauce; fi'
