@@ -2,7 +2,7 @@ import { D2LFetchAuth } from './d2lfetch-auth.js';
 
 const fetchAuth = new D2LFetchAuth();
 
-module.exports = function auth(request, next, options) {
+export default function auth(request, next, options) {
 	if (options) {
 		fetchAuth._enableTokenCache = (options.enableTokenCache === true);
 		if (options._resetLocalCache) {
@@ -10,4 +10,4 @@ module.exports = function auth(request, next, options) {
 		}
 	}
 	return fetchAuth.wrap(request, next);
-};
+}
