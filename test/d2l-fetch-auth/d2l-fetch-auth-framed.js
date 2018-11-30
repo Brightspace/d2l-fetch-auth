@@ -1,4 +1,4 @@
-import auth from '../../dist/d2lfetch-auth-framed.js';
+import auth from '../../es6/d2lfetch-auth-framed.js';
 
 var invalidRequestInputs = [
 	undefined,
