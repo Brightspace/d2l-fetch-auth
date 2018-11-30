@@ -8,6 +8,7 @@
   ],
   "name": "d2l-fetch-auth",
   "main": "index.js",
+  "module": "index.es6.js",
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "scripts": {
@@ -27,14 +28,14 @@
     "eslint-config-brightspace": "^0.2.4",
     "eslint-plugin-html": "^2.0.1",
     "polymer-cli": "^1.9.1",
-    "wct-browser-legacy": "^1.0.1"
-  },
-  "dependencies": {
-    "frau-jwt": "^2.0.0",
     "rollup": "^0.67.1",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^3.4.0"
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "wct-browser-legacy": "^1.0.1"
+  },
+  "dependencies": {
+    "frau-jwt": "^2.0.0"
   },
   "resolutions": {
     "inherits": "2.0.3",
