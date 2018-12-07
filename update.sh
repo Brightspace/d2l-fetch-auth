@@ -46,7 +46,7 @@ git checkout upstream/master
 git config --global user.email "travis@travis-ci.com"
 git config --global user.name "Travis CI"
 
-npm version ${newVersion} -m "[skip ci] Update to %s"
+npm version ${newVersion} -m "Update to %s"
 
 git status
 
