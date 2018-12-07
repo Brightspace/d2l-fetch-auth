@@ -17,39 +17,35 @@ npm run build
 
 Reference the script in your html after your reference to `d2l-fetch` (see [here](https://github.com/Brightspace/d2l-fetch) for details on d2l-fetch):
 
+Install `d2l-fetch-auth` via npm:
+```sh
+npm install Brightspace/d2l-fetch-auth
+```
+
 ```html
-<script src="https://s.brightspace.com/lib/d2lfetch/1.0.0/d2lfetch.js"></script>
-<script src="../dist/d2lfetch-auth.js"></script>
+<script type="module">
+import auth from 'd2l-fetch-auth/dist/d2l-fetch-auth.js';
+</script>
 ```
 
 Alternatively, if you are making requests from within the context of an iFramed Free Range Application (iFRA), reference the framed script:
 
 ```html
-<script src="https://s.brightspace.com/lib/d2lfetch/0.2.0/d2lfetch.js"></script>
-<script src="../dist/d2lfetch-auth-framed.js"></script>
+<script type="module">
+import auth from 'd2l-fetch-auth/dist/d2l-fetch-auth.js';
+</script>
 ```
 
-This will add the `auth` middleware function to the `d2lfetch` object. Alternatively, you can install `d2l-fetch-auth` via bower:
-
-```sh
-bower install Brightspace/d2l-fetch-auth
-```
-
-and reference it as you would any other bower package:
-
-```html
-<link rel="import" href="../d2l-fetch-auth/d2l-fetch-auth.html">
-<link rel="import" href="../d2l-fetch-auth/d2l-fetch-auth-framed.html">
-```
+This will import the `auth` middleware function.
 
 ### Auth
 
 Install the `auth` middleware to d2lfetch via the `use` function and then start making your requests.
 
 ```js
-window.d2lfetch.use({name: 'auth', fn: window.d2lfetch.auth});
+d2lfetch.use({name: 'auth', fn: auth});
 
-window.d2lfetch.fetch(new Request('http://example.com/api/entity/1'))
+d2lfetch.fetch(new Request('http://example.com/api/entity/1'))
 	.then(function(response) {
 		// do something with the response
 	});

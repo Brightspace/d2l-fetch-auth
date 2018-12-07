@@ -1,3 +1,5 @@
+import { D2LFetchAuthFramed } from '../dist/d2lfetch-auth.framedInternals.js';
+
 describe('D2LFetchAuthFramed class internals', function() {
 	var d2lFetchAuthFramed,
 		sandbox,
@@ -9,7 +11,7 @@ describe('D2LFetchAuthFramed class internals', function() {
 
 	beforeEach(function() {
 		sandbox = sinon.sandbox.create();
-		d2lFetchAuthFramed = new window.d2lfetch.D2LFetchAuthFramed();
+		d2lFetchAuthFramed = new D2LFetchAuthFramed();
 		sandbox.stub(window, 'fetch');
 		sandbox.stub(d2lFetchAuthFramed, '_getToken').returns(Promise.resolve(tokenValue));
 	});
@@ -19,7 +21,7 @@ describe('D2LFetchAuthFramed class internals', function() {
 	});
 
 	it('should be a thing', function() {
-		expect(d2lFetchAuthFramed).to.be.an.instanceOf(window.d2lfetch.D2LFetchAuthFramed);
+		expect(d2lFetchAuthFramed).to.be.an.instanceOf(D2LFetchAuthFramed);
 	});
 
 	//TODO: test the stuff with _getToken mocked out

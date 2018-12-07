@@ -1,3 +1,5 @@
+import { D2LFetchAuth } from '../dist/d2lfetch-auth.internals.js';
+
 describe('D2LFetchAuth class internals', function() {
 	var d2lFetchAuth,
 		xsrfTokenKey = 'XSRF.Token',
@@ -19,7 +21,7 @@ describe('D2LFetchAuth class internals', function() {
 	beforeEach(function() {
 		setXsrfToken(xsrfTokenValue);
 		sinon.stub(window, 'fetch');
-		d2lFetchAuth = new window.d2lfetch.D2LFetchAuth();
+		d2lFetchAuth = new D2LFetchAuth();
 	});
 
 	afterEach(function() {
@@ -28,7 +30,7 @@ describe('D2LFetchAuth class internals', function() {
 	});
 
 	it('should be a thing', function() {
-		expect(d2lFetchAuth).to.be.an.instanceOf(window.d2lfetch.D2LFetchAuth);
+		expect(d2lFetchAuth).to.be.an.instanceOf(D2LFetchAuth);
 	});
 
 	function clearXsrfToken() {
