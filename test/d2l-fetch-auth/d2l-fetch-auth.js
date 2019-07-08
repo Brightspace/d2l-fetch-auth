@@ -144,15 +144,13 @@ describe('d2l-fetch-auth', function() {
 				});
 		});
 
-		it('should return rejected promise if auth token request fails', function(done) {
+		it('should return rejected promise if auth token request fails', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetToken.returns(Promise.reject());
 
 			return auth(getAbsolutePathGETRequest())
 				.then(function() {
 					expect.fail();
-				}, function() {
-					done();
-				});
+				}, function() {});
 		});
 
 		it('should throw if LPs GetToken is not present', function() {
@@ -165,7 +163,7 @@ describe('d2l-fetch-auth', function() {
 		it('should throw if LPs GetXsrfToken is not present', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetXsrfToken = undefined;
 
-			expect(auth(getRelativeGETRequest()))
+			expect(() => auth(getRelativeGETRequest()))
 				.to.throw(TypeError);
 		});
 
