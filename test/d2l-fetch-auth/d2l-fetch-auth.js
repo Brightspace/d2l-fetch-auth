@@ -123,7 +123,7 @@ describe('d2l-fetch-auth', function() {
 			return auth(input)
 				.then(function(req) {
 					expect(req).to.be(input);
-					expect(req.headers.get('authorization')).to.be(null);
+					expect(req.headers.get('authorization')).to.equal(null);
 				});
 		});
 
