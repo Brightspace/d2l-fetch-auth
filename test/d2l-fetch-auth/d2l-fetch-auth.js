@@ -117,7 +117,7 @@ describe('d2l-fetch-auth', function() {
 			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
 				.then(function(req) {
-					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken.access_token);
+					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken);
 				});
 		});
 
