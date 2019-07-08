@@ -1,3 +1,4 @@
+import { default as Client } from 'ifrau/client/slim';
 import auth from '../../es6/d2lfetch-auth-framed.js';
 
 var invalidRequestInputs = [
@@ -9,12 +10,32 @@ var invalidRequestInputs = [
 	{ whatiam: 'is not a Request'}
 ];
 
+function setupAuthTokenResponse() {
+	Client.prototype.request
+		.withArgs('frau-jwt-new-jwt')
+		.returns(Promise.resolve('a.b.c'));
+}
+
+function getRelativeGETRequest() {
+	return new Request('/path/to/data');
+}
+
+function getAbsolutePathGETRequest() {
+	return new Request('https://api.example.com/data');
+}
+
+function getTrustedAbsolutePathGETRequest() {
+	return new Request('https://foo.api.brightspace.com/bar');
+}
+
 describe('d2l-fetch-auth', function() {
 	var sandbox;
 
 	beforeEach(function() {
 		sandbox = sinon.sandbox.create();
 		sandbox.stub(window, 'fetch');
+		sandbox.stub(Client.prototype, 'connect').returns(Promise.resolve());
+		sandbox.stub(Client.prototype, 'request');
 	});
 
 	afterEach(function() {
@@ -44,6 +65,33 @@ describe('d2l-fetch-auth', function() {
 			return auth(request)
 				.then(function(output) {
 					expect(output.headers.get('Authorization')).to.equal(token);
+				});
+		});
+
+		it('should resolve to a request with no auth header when url is relative', function() {
+			return auth(getRelativeGETRequest())
+				.then(function(req) {
+					expect(req.method).to.equal('GET');
+					expect(req.headers.get('authorization')).to.not.be.defined;
+					expect(req.headers.get('x-csrf-token')).to.not.be.defined;
+				});
+		});
+
+		it('should resolve to a request with no auth header when an absolute url is not trusted', function() {
+			setupAuthTokenResponse();
+			const input = getAbsolutePathGETRequest();
+			return auth(input)
+				.then(function(req) {
+					expect(req).to.be(input);
+					expect(req.headers.get('authorization')).to.be(null);
+				});
+		});
+
+		it('should resolve to a request with auth header when an absolute url is trusted', function() {
+			setupAuthTokenResponse();
+			return auth(getTrustedAbsolutePathGETRequest())
+				.then(function(req) {
+					expect(req.headers.get('authorization')).to.equal('Bearer a.b.c');
 				});
 		});
 	});

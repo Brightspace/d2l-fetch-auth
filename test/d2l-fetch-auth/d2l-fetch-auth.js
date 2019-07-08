@@ -27,6 +27,10 @@ describe('d2l-fetch-auth', function() {
 		return new Request('https://api.example.com/data');
 	}
 
+	function getTrustedAbsolutePathGETRequest() {
+		return new Request('https://foo.api.brightspace.com/bar');
+	}
+
 	function getCustomHeadersGETRequest() {
 		return new Request('/path/to/data', { headers: { Accept: 'application/vnd.siren+json', 'X-My-Header': 'my value' } });
 	}
@@ -113,9 +117,19 @@ describe('d2l-fetch-auth', function() {
 				});
 		});
 
-		it('should resolve to a request with auth header when url is absolute', function() {
+		it('should resolve to a request with no auth header when an absolute url is not trusted', function() {
 			setupAuthTokenResponse();
-			return auth(getAbsolutePathGETRequest())
+			const input = getAbsolutePathGETRequest();
+			return auth(input)
+				.then(function(req) {
+					expect(req).to.be(input);
+					expect(req.headers.get('authorization')).to.be(null);
+				});
+		});
+
+		it('should resolve to a request with auth header when an absolute url is trusted', function() {
+			setupAuthTokenResponse();
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken);
 				});
