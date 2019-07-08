@@ -122,7 +122,7 @@ describe('d2l-fetch-auth', function() {
 			const input = getAbsolutePathGETRequest();
 			return auth(input)
 				.then(function(req) {
-					expect(req).to.be(input);
+					expect(req).to.equal(input);
 					expect(req.headers.get('authorization')).to.equal(null);
 				});
 		});
