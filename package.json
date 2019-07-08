@@ -35,7 +35,7 @@
     "wct-browser-legacy": "^1.0.1"
   },
   "dependencies": {
-    "frau-jwt": "^2.0.2"
+    "frau-jwt": "^2.0.3"
   },
   "resolutions": {
     "inherits": "2.0.3",
