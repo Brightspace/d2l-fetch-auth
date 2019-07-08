@@ -165,7 +165,7 @@ describe('d2l-fetch-auth', function() {
 		it('should throw if LPs GetXsrfToken is not present', function(done) {
 			D2L.LP.Web.Authentication.OAuth2.GetXsrfToken = undefined;
 
-			expect(auth(getRelativeGETRequest())
+			expect(auth(getRelativeGETRequest()))
 				.to.throw(TypeError);
 		});
 
