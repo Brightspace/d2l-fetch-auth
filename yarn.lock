@@ -2264,6 +2264,13 @@ cycle@1.0.x:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
 
+"d2l-fetch-auth-trust@Brightspace/d2l-fetch-auth-trust#semver:^1":
+  version "1.0.0"
+  resolved "https://codeload.github.com/Brightspace/d2l-fetch-auth-trust/tar.gz/9cbf9b4ad8339540048a6a5b8bcd24eb7f5d017c"
+  dependencies:
+    frau-framed "^1.0.1"
+    ifrau "^0.27.0"
+
 d@1:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"
@@ -3319,13 +3326,14 @@ frau-framed@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/frau-framed/-/frau-framed-1.0.1.tgz#28e5fbd62fd5505f8f1ce92e19dd4803251d0794"
 
-frau-jwt@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/frau-jwt/-/frau-jwt-2.0.1.tgz#bdcd1736813fc97e9a4bfcf4930b18204186563f"
+frau-jwt@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/frau-jwt/-/frau-jwt-2.0.3.tgz#17043b3be46752cc8c654473be84bf65d4ff6883"
+  integrity sha512-aa6QOt5Qy7Yh//pkWeK1Rb+wnMw0UeJVFK/x2dpeySdw8Ygg0+zwQL6IqNNegtnx0sPGobsgs5vdwKzlIigqlQ==
   dependencies:
     frau-framed "^1.0.1"
     frau-superagent-xsrf-token "^2.0.0"
-    ifrau "^0.21.0"
+    ifrau "^0.27.0"
     lie "^3.0.2"
     superagent "^3.4.1"
 
@@ -3915,9 +3923,10 @@ iframe-resizer@^3.5.0:
   version "3.6.3"
   resolved "https://registry.yarnpkg.com/iframe-resizer/-/iframe-resizer-3.6.3.tgz#77f474180e9b0accd7454c37b6f71bf6ff5482c5"
 
-ifrau@^0.21.0:
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/ifrau/-/ifrau-0.21.3.tgz#d4f5b9d8e6cbf4dc02ebb2642308003e50f525fd"
+ifrau@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/ifrau/-/ifrau-0.27.0.tgz#b4af16dfe0bb7511a9e75f0b730cf2fc55c7c49c"
+  integrity sha512-Q/f8hubYmBc1Fhb7g4h6SOM1rXyboVVZJ2cs1HLLCn1f6EnHYN7KMX5J2hTaEL1qrC34p6Jad9aa9CU9CN7YcA==
   dependencies:
     iframe-resizer "^3.5.0"
     inherits "^2.0.1"

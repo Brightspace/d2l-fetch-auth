@@ -27,6 +27,10 @@ describe('d2l-fetch-auth', function() {
 		return new Request('https://api.example.com/data');
 	}
 
+	function getTrustedAbsolutePathGETRequest() {
+		return new Request('https://foo.api.brightspace.com/bar');
+	}
+
 	function getCustomHeadersGETRequest() {
 		return new Request('/path/to/data', { headers: { Accept: 'application/vnd.siren+json', 'X-My-Header': 'my value' } });
 	}
@@ -113,9 +117,17 @@ describe('d2l-fetch-auth', function() {
 				});
 		});
 
-		it('should resolve to a request with auth header when url is absolute', function() {
+		it('should resolve to a request with no auth header when an absolute url is not trusted', function() {
 			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
+				.then(function(req) {
+					expect(req.headers.get('authorization')).to.equal(null);
+				});
+		});
+
+		it('should resolve to a request with auth header when an absolute url is trusted', function() {
+			setupAuthTokenResponse();
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken);
 				});
@@ -138,7 +150,7 @@ describe('d2l-fetch-auth', function() {
 
 		it('should not set the credentials value of the request to same-origin when the url is absolute', function() {
 			setupAuthTokenResponse();
-			return auth(getAbsolutePathGETRequest())
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.credentials).to.equal('omit');
 				});
@@ -147,7 +159,7 @@ describe('d2l-fetch-auth', function() {
 		it('should return rejected promise if auth token request fails', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetToken.returns(Promise.reject());
 
-			return auth(getAbsolutePathGETRequest())
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function() {
 					expect.fail();
 				}, function() {});
@@ -156,7 +168,7 @@ describe('d2l-fetch-auth', function() {
 		it('should throw if LPs GetToken is not present', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetToken = undefined;
 
-			expect(() => auth(getAbsolutePathGETRequest()))
+			expect(() => auth(getTrustedAbsolutePathGETRequest()))
 				.to.throw(TypeError);
 		});
 

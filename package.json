@@ -35,6 +35,7 @@
     "wct-browser-legacy": "^1.0.1"
   },
   "dependencies": {
+    "d2l-fetch-auth-trust": "Brightspace/d2l-fetch-auth-trust#semver:^1",
     "frau-jwt": "^2.0.3"
   },
   "resolutions": {
