@@ -35,7 +35,7 @@ describe('d2l-fetch-auth', function() {
 		sandbox = sinon.sandbox.create();
 		sandbox.stub(window, 'fetch');
 		sandbox.stub(Client.prototype, 'connect').returns(Promise.resolve());
-		sandbox.stub(Client.prototype, 'request');
+		sandbox.stub(Client.prototype, 'request').returns(Promise.resolve());
 	});
 
 	afterEach(function() {
