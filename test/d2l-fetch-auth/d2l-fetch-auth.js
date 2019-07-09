@@ -12,34 +12,8 @@ var invalidRequestInputs = [
 describe('d2l-fetch-auth', function() {
 
 	var sandbox,
-		authToken = createTokenForUser('169'),
-		xsrfTokenKey = 'XSRF.Token',
-		xsrfTokenValue = 'foo',
-		localStorageKey = 'D2L.Fetch.Tokens',
-		authTokenResponse = {
-			headers: { 'x-csrf-token': xsrfTokenValue },
-			body: { access_token: authToken.access_token, expires_at: authToken.expires_at }
-		};
-
-	function createTokenForUser(userId) {
-		return {
-			access_token: 'part1.' + btoa(JSON.stringify({ sub: userId })) + '.part3',
-			expires_at: Number.MAX_VALUE
-		};
-	}
-
-	function clearXsrfToken() {
-		window.localStorage.removeItem(xsrfTokenKey);
-	}
-
-	function setXsrfToken(value) {
-		window.localStorage.setItem(xsrfTokenKey, value);
-	}
-
-	function clearTokenCache() {
-		window.localStorage.removeItem('Session.UserId');
-		window.localStorage.removeItem(localStorageKey);
-	}
+		authToken = 'a.b.c',
+		xsrfTokenValue = 'foo';
 
 	function getRelativeGETRequest() {
 		return new Request('/path/to/data');
@@ -58,27 +32,20 @@ describe('d2l-fetch-auth', function() {
 	}
 
 	function setupAuthTokenResponse() {
-		window.fetch
-			.withArgs(sinon.match.has('method', 'POST'))
-			.returns(
-				Promise.resolve(
-					new Response(
-						JSON.stringify(authTokenResponse.body),
-						{ status: 200, referrerToken: xsrfTokenValue }
-					)
-				)
-			);
+		D2L.LP.Web.Authentication.OAuth2.GetToken.returns(Promise.resolve(authToken));
 	}
 
 	beforeEach(function() {
 		sandbox = sinon.sandbox.create();
-		setXsrfToken(xsrfTokenValue);
 		sandbox.stub(window, 'fetch');
+
+		window.D2L = { LP: { Web: { Authentication: {
+			OAuth2: { GetToken: sandbox.stub() },
+			Xsrf: { GetXsrfToken: sandbox.stub().returns(xsrfTokenValue) }
+		} } } };
 	});
 
 	afterEach(function() {
-		clearXsrfToken();
-		clearTokenCache();
 		sandbox.restore();
 	});
 
@@ -138,14 +105,6 @@ describe('d2l-fetch-auth', function() {
 		});
 
 		it('should resolve to a request with XSRF header when url is relative', function() {
-			clearXsrfToken();
-			window.fetch
-				.returns(Promise.resolve(
-					new Response(
-						'{ "referrerToken": "' + xsrfTokenValue + '" }'
-					)
-				));
-
 			return auth(getRelativePUTRequest())
 				.then(function(req) {
 					expect(req.method).to.equal('PUT');
@@ -158,7 +117,7 @@ describe('d2l-fetch-auth', function() {
 			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
 				.then(function(req) {
-					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken.access_token);
+					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken);
 				});
 		});
 
@@ -178,149 +137,34 @@ describe('d2l-fetch-auth', function() {
 		});
 
 		it('should not set the credentials value of the request to same-origin when the url is absolute', function() {
+			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.credentials).to.equal('omit');
 				});
 		});
 
-		it('should return rejected promise if XSRF request fails', function(done) {
-			clearXsrfToken();
+		it('should return rejected promise if auth token request fails', function() {
+			D2L.LP.Web.Authentication.OAuth2.GetToken.returns(Promise.reject());
 
-			window.fetch
-				.withArgs(sinon.match.has('method', 'GET'))
-				.returns(
-					Promise.resolve(
-						new Response(
-							'{}', {
-								status: 404,
-								statusText: 'not found'
-							}
-						)
-					)
-				);
-
-			auth(getAbsolutePathGETRequest())
-				.then(function() {
-					expect.fail();
-				})
-				.catch(function() {
-					done();
-				});
-		});
-
-		it('should return rejected promise if auth token request fails', function(done) {
-			window.fetch
-				.withArgs(sinon.match.has('method', 'POST'))
-				.returns(
-					Promise.resolve(
-						new Response(
-							'{}', {
-								status: 404,
-								statusText: 'not found'
-							}
-						)
-					)
-				);
-
-			auth(getAbsolutePathGETRequest())
-				.then(function() {
-					expect.fail();
-				})
-				.catch(function() {
-					done();
-				});
-		});
-
-		it('should not store auth token in localStorage by default', function() {
-			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
 				.then(function() {
-					const cachedValue = window.localStorage.getItem(localStorageKey);
-					expect(cachedValue).to.be.null;
-				});
+					expect.fail();
+				}, function() {});
 		});
 
-		it('should store auth token in localStorage when asked', function() {
-			window.localStorage.setItem('Session.UserId', '169');
-			setupAuthTokenResponse();
-			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					const cachedValue = JSON.parse(
-						window.localStorage.getItem(localStorageKey)
-					);
-					expect(cachedValue['*:*:*']).to.eql(authToken);
-				});
+		it('should throw if LPs GetToken is not present', function() {
+			D2L.LP.Web.Authentication.OAuth2.GetToken = undefined;
+
+			expect(() => auth(getAbsolutePathGETRequest()))
+				.to.throw(TypeError);
 		});
 
-		it('should not use cached token if it\'s for the wrong user', function() {
-			window.localStorage.setItem('Session.UserId', '169');
-			window.localStorage.setItem(
-				localStorageKey,
-				JSON.stringify(
-					{
-						'*:*:*': createTokenForUser('123')
-					}
-				)
-			);
-			setupAuthTokenResponse();
-			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					const expected = JSON.stringify({
-						'*:*:*': createTokenForUser('169')
-					});
-					expect(window.localStorage.getItem(localStorageKey)).to.eql(expected);
-				});
-		});
+		it('should throw if LPs GetXsrfToken is not present', function() {
+			D2L.LP.Web.Authentication.Xsrf.GetXsrfToken = undefined;
 
-		it('should remove cached token when user changes', function() {
-			try {
-				new StorageEvent('storage');
-			} catch (e) {
-				// Edge doesn't like custom StorageEvents, so skip the test for now
-				return;
-			}
-			window.localStorage.setItem('Session.UserId', '169');
-			window.localStorage.setItem(localStorageKey, 'bad value');
-			setupAuthTokenResponse();
-			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					var e = new StorageEvent('storage');
-					e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123', window.location.href, window.sessionStorage);
-					window.dispatchEvent(e);
-					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
-				});
-		});
-
-		it('should remove cached token when user logs out', function() {
-			window.localStorage.setItem('Session.UserId', '169');
-			window.localStorage.setItem(localStorageKey, 'bad value');
-			setupAuthTokenResponse();
-			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					window.dispatchEvent(new CustomEvent('d2l-logout'));
-					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
-				});
+			expect(() => auth(getRelativePUTRequest()))
+				.to.throw(TypeError);
 		});
 
 	});
