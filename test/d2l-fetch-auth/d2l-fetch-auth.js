@@ -119,10 +119,8 @@ describe('d2l-fetch-auth', function() {
 
 		it('should resolve to a request with no auth header when an absolute url is not trusted', function() {
 			setupAuthTokenResponse();
-			const input = getAbsolutePathGETRequest();
-			return auth(input)
+			return auth(getAbsolutePathGETRequest)
 				.then(function(req) {
-					expect(req).to.equal(input);
 					expect(req.headers.get('authorization')).to.equal(null);
 				});
 		});
@@ -161,7 +159,7 @@ describe('d2l-fetch-auth', function() {
 		it('should return rejected promise if auth token request fails', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetToken.returns(Promise.reject());
 
-			return auth(getAbsolutePathGETRequest())
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function() {
 					expect.fail();
 				}, function() {});
@@ -170,7 +168,7 @@ describe('d2l-fetch-auth', function() {
 		it('should throw if LPs GetToken is not present', function() {
 			D2L.LP.Web.Authentication.OAuth2.GetToken = undefined;
 
-			expect(() => auth(getAbsolutePathGETRequest()))
+			expect(() => auth(getTrustedAbsolutePathGETRequest()))
 				.to.throw(TypeError);
 		});
 
