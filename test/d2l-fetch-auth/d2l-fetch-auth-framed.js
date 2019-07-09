@@ -1,4 +1,4 @@
-import { default as Client } from 'ifrau/client/slim';
+import Client from 'ifrau/client/slim';
 import auth from '../../es6/d2lfetch-auth-framed.js';
 
 var invalidRequestInputs = [
