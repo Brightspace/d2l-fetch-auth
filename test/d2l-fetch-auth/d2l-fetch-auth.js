@@ -150,7 +150,7 @@ describe('d2l-fetch-auth', function() {
 
 		it('should not set the credentials value of the request to same-origin when the url is absolute', function() {
 			setupAuthTokenResponse();
-			return auth(getAbsolutePathGETRequest())
+			return auth(getTrustedAbsolutePathGETRequest())
 				.then(function(req) {
 					expect(req.credentials).to.equal('omit');
 				});
