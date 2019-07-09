@@ -79,10 +79,8 @@ describe('d2l-fetch-auth', function() {
 
 		it('should resolve to a request with no auth header when an absolute url is not trusted', function() {
 			setupAuthTokenResponse();
-			const input = getAbsolutePathGETRequest();
-			return auth(input)
+			return auth(getAbsolutePathGETRequest)
 				.then(function(req) {
-					expect(req).to.be(input);
 					expect(req.headers.get('authorization')).to.equal(null);
 				});
 		});
