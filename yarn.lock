@@ -2264,7 +2264,7 @@ cycle@1.0.x:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
 
-d2l-fetch-auth-trust@Brightspace/d2l-fetch-auth-trust#master:
+"d2l-fetch-auth-trust@Brightspace/d2l-fetch-auth-trust#semver:^1":
   version "1.0.0"
   resolved "https://codeload.github.com/Brightspace/d2l-fetch-auth-trust/tar.gz/9cbf9b4ad8339540048a6a5b8bcd24eb7f5d017c"
   dependencies:
