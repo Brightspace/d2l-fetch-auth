@@ -2264,13 +2264,6 @@ cycle@1.0.x:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
 
-"d2l-fetch-auth-trust@Brightspace/d2l-fetch-auth-trust#semver:^1":
-  version "1.0.0"
-  resolved "https://codeload.github.com/Brightspace/d2l-fetch-auth-trust/tar.gz/9cbf9b4ad8339540048a6a5b8bcd24eb7f5d017c"
-  dependencies:
-    frau-framed "^1.0.1"
-    ifrau "^0.27.0"
-
 d@1:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"

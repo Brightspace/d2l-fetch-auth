@@ -1,7 +1,4 @@
-import initializeUrlTrust from 'd2l-fetch-auth-trust/framed';
 import { default as jwt } from 'frau-jwt/framed';
-
-const urlTrust = initializeUrlTrust();
 
 export class D2LFetchAuthFramed {
 
@@ -13,10 +10,6 @@ export class D2LFetchAuthFramed {
 		next = next || function(r) { return Promise.resolve(r); };
 
 		if (request.headers.get('Authorization')) {
-			return next(request);
-		}
-
-		if (!urlTrust.shouldTrust(request.url)) {
 			return next(request);
 		}
 
