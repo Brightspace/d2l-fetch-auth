@@ -9,10 +9,6 @@ var invalidRequestInputs = [
 	{ whatiam: 'is not a Request'}
 ];
 
-function getRelativeGETRequest() {
-	return new Request('/path/to/data');
-}
-
 describe('d2l-fetch-auth', function() {
 	var sandbox;
 
@@ -48,15 +44,6 @@ describe('d2l-fetch-auth', function() {
 			return auth(request)
 				.then(function(output) {
 					expect(output.headers.get('Authorization')).to.equal(token);
-				});
-		});
-
-		it('should resolve to a request with no auth header when url is relative', function() {
-			return auth(getRelativeGETRequest())
-				.then(function(req) {
-					expect(req.method).to.equal('GET');
-					expect(req.headers.get('authorization')).to.not.be.defined;
-					expect(req.headers.get('x-csrf-token')).to.not.be.defined;
 				});
 		});
 	});

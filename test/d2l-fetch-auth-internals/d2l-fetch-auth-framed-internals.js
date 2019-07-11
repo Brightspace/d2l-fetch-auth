@@ -6,7 +6,7 @@ describe('D2LFetchAuthFramed class internals', function() {
 		tokenValue = 'Aragorn';
 
 	function getRequest() {
-		return new Request('https://api.brightspace.com/path/to/data');
+		return new Request('/path/to/data');
 	}
 
 	beforeEach(function() {

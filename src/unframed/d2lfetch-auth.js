@@ -1,7 +1,3 @@
-import initializeUrlTrust from 'd2l-fetch-auth-trust/local';
-
-const urlTrust = initializeUrlTrust();
-
 export class D2LFetchAuth {
 
 	wrap(request, next) {
@@ -25,10 +21,6 @@ export class D2LFetchAuth {
 			} else {
 				return next(this._getRequest(request));
 			}
-		}
-
-		if (!urlTrust.shouldTrust(request.url)) {
-			return next(request);
 		}
 
 		return D2L.LP.Web.Authentication.OAuth2.GetToken('*:*:*')
