@@ -2,8 +2,5 @@
   "extends": "brightspace/node-config",
   "parserOptions": {
     "sourceType": "module"
-  },
-  "globals": {
-    "D2L": true
   }
 }
