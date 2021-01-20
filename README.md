@@ -4,7 +4,7 @@ Provides a middleware function for wrapping a window.Request object with d2l aut
 ## Setup
 
 ```sh
-yarn install
+npm ci
 ```
 
 ## Build
