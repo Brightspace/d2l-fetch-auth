@@ -61,4 +61,4 @@ We recommend:
 
 ## Publishing
 
-The application will automatically increment the minor build version and publish a release version to the Brightspace CDN after merge to the `master` branch is complete. If you wish to increment the `patch` or `major` version instead please add **[increment patch]** or **[increment major]** to the notes inside your merge message.
+The application uses the [Semantic Release Plugin](https://github.com/BrightspaceUI/actions/tree/master/semantic-release) and is configured to publish to npm.
