@@ -14,14 +14,10 @@ export class D2LFetchAuthFramed {
 		}
 
 		return this._getToken('*:*:*')
-			.then(function(token) {
+			.then((token) => {
 				const headers = { 'Authorization': `Bearer ${token}` };
 				return next(this._getRequest(request, headers));
-			}.bind(this));
-	}
-
-	_getToken(scope) {
-		return jwt(scope);
+			});
 	}
 
 	_getRequest(request, headers) {
@@ -33,4 +29,9 @@ export class D2LFetchAuthFramed {
 
 		return request;
 	}
+
+	_getToken(scope) {
+		return jwt(scope);
+	}
+
 }
