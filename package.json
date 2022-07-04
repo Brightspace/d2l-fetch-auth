@@ -13,31 +13,40 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "rollup -c rollup/rollup.config.js",
+    "lint": "eslint . --ext .js",
     "prepare": "npm run build",
     "pretest": "rollup -c rollup/rollup.test.config.js",
-    "test:lint:js": "eslint src/ test/ --ext .js",
-    "test:lint": "npm run test:lint:js",
-    "test": "npm run test:lint && npm run test:polymer:local",
-    "test:polymer:local": "polymer test --npm --skip-plugin sauce",
-    "test:polymer:sauce": "polymer test --npm --skip-plugin local"
+    "test": "npm run lint &&  npm run test:headless",
+    "test:headless": "web-test-runner --files ./test/**/*.test.js --node-resolve",
+    "test:headless:watch": "web-test-runner --files ./test/**/*.test.js --node-resolve --watch"
   },
   "devDependencies": {
     "@babel/core": "^7",
     "@babel/eslint-parser": "^7",
+    "@open-wc/testing": "^3",
+    "@web/test-runner": "^0.13",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.18",
     "eslint-plugin-html": "^6",
     "eslint-plugin-import": "^2",
     "eslint-plugin-lit": "^1",
     "eslint-plugin-sort-class-members": "^1",
-    "polymer-cli": "^1.9.1",
     "rollup": "^0.67.1",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "wct-browser-legacy": "^1.0.1"
+    "sinon": "^14"
   },
   "dependencies": {
     "frau-jwt": "^2.0.3"
-  }
+  },
+  "files": [
+    "dist/",
+    "es6/",
+    "src/",
+    "d2l-fetch-auth-framed.js",
+    "d2l-fetch-auth.js",
+    "index.es6.js",
+    "index.js"
+  ]
 }

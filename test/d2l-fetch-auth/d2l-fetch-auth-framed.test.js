@@ -1,4 +1,6 @@
-import auth from '../../es6/d2lfetch-auth-framed.js';
+import { auth } from '../../d2l-fetch-auth-framed.js';
+import { expect } from '@open-wc/testing';
+import sinon from 'sinon';
 
 const invalidRequestInputs = [
 	undefined,
@@ -13,7 +15,7 @@ describe('d2l-fetch-auth', () => {
 	let sandbox;
 
 	beforeEach(() => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		sandbox.stub(window, 'fetch');
 	});
 
@@ -22,7 +24,7 @@ describe('d2l-fetch-auth', () => {
 	});
 
 	it('should create the d2lfetch object if it doesn\'t exist', () => {
-		expect(window.d2lfetch).to.be.defined;
+		expect(window.d2lfetch).to.not.be.undefined;
 	});
 
 	describe('.auth', () => {

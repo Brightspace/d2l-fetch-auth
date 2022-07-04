@@ -1,4 +1,6 @@
-import auth from '../../es6/d2lfetch-auth.js';
+import { auth } from '../../d2l-fetch-auth.js';
+import { expect } from '@open-wc/testing';
+import sinon from 'sinon';
 
 const invalidRequestInputs = [
 	undefined,
@@ -71,7 +73,7 @@ describe('d2l-fetch-auth', () => {
 	}
 
 	beforeEach(() => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		setXsrfToken(xsrfTokenValue);
 		sandbox.stub(window, 'fetch');
 	});
@@ -87,7 +89,7 @@ describe('d2l-fetch-auth', () => {
 	}
 
 	it('should create the d2lfetch object if it doesn\'t exist', () => {
-		expect(window.d2lfetch).to.be.defined;
+		expect(window.d2lfetch).to.not.be.undefined;
 	});
 
 	describe('.auth', () => {
@@ -132,8 +134,8 @@ describe('d2l-fetch-auth', () => {
 			return auth(getRelativeGETRequest())
 				.then((req) => {
 					expect(req.method).to.equal('GET');
-					expect(req.headers.get('authorization')).to.not.be.defined;
-					expect(req.headers.get('x-csrf-token')).to.not.be.defined;
+					expect(req.headers.get('authorization')).to.be.null;
+					expect(req.headers.get('x-csrf-token')).to.be.null;
 				});
 		});
 

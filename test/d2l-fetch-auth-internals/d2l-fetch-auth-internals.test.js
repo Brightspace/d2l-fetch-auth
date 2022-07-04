@@ -1,7 +1,9 @@
 import { D2LFetchAuth } from '../dist/d2lfetch-auth.internals.js';
+import { expect } from '@open-wc/testing';
+import sinon from 'sinon';
 
 describe('D2LFetchAuth class internals', () => {
-	let d2lFetchAuth;
+	let d2lFetchAuth, sandbox;
 	const xsrfTokenKey = 'XSRF.Token',
 		xsrfTokenValue = 'foo',
 		defaultScope = '*:*:*',
@@ -20,13 +22,14 @@ describe('D2LFetchAuth class internals', () => {
 
 	beforeEach(() => {
 		setXsrfToken(xsrfTokenValue);
-		sinon.stub(window, 'fetch');
+		sandbox = sinon.createSandbox();
+		sandbox.stub(window, 'fetch');
 		d2lFetchAuth = new D2LFetchAuth();
 	});
 
 	afterEach(() => {
 		clearXsrfToken();
-		window.fetch.restore();
+		sandbox.restore();
 	});
 
 	it('should be a thing', () => {
