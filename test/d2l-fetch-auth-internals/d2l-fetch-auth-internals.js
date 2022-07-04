@@ -1,8 +1,8 @@
 import { D2LFetchAuth } from '../dist/d2lfetch-auth.internals.js';
 
-describe('D2LFetchAuth class internals', function() {
-	var d2lFetchAuth,
-		xsrfTokenKey = 'XSRF.Token',
+describe('D2LFetchAuth class internals', () => {
+	let d2lFetchAuth;
+	const xsrfTokenKey = 'XSRF.Token',
 		xsrfTokenValue = 'foo',
 		defaultScope = '*:*:*',
 		authToken = {
@@ -18,18 +18,18 @@ describe('D2LFetchAuth class internals', function() {
 		return (Date.now() / 1000) | 0;
 	}
 
-	beforeEach(function() {
+	beforeEach(() => {
 		setXsrfToken(xsrfTokenValue);
 		sinon.stub(window, 'fetch');
 		d2lFetchAuth = new D2LFetchAuth();
 	});
 
-	afterEach(function() {
+	afterEach(() => {
 		clearXsrfToken();
 		window.fetch.restore();
 	});
 
-	it('should be a thing', function() {
+	it('should be a thing', () => {
 		expect(d2lFetchAuth).to.be.an.instanceOf(D2LFetchAuth);
 	});
 
@@ -41,40 +41,40 @@ describe('D2LFetchAuth class internals', function() {
 		window.localStorage.setItem(xsrfTokenKey, value);
 	}
 
-	describe('XSRF request', function() {
-		it('should send a XSRF request when the XSRF token does not exist in local storage', function() {
+	describe('XSRF request', () => {
+		it('should send a XSRF request when the XSRF token does not exist in local storage', () => {
 			clearXsrfToken();
 
 			window.fetch.returns(
 				Promise.resolve(
 					new Response(
-						'{ "referrerToken": "' + xsrfTokenValue + '" }'
+						`{ "referrerToken": "${xsrfTokenValue}" }`
 					)
 				)
 			);
 
 			return d2lFetchAuth._getXsrfToken()
-				.then(function(xsrfToken) {
+				.then((xsrfToken) => {
 					expect(xsrfToken).to.equal(xsrfTokenValue);
 				});
 		});
 
-		it('should use xsrf token if it exists in local storage', function() {
+		it('should use xsrf token if it exists in local storage', () => {
 			setXsrfToken('oh yeah, awesome');
 
 			return d2lFetchAuth._getXsrfToken()
-				.then(function(xsrfToken) {
+				.then((xsrfToken) => {
 					expect(xsrfToken).to.equal('oh yeah, awesome');
 				});
 		});
 	});
 
-	describe('Auth token request', function() {
-		afterEach(function() {
+	describe('Auth token request', () => {
+		afterEach(() => {
 			d2lFetchAuth._resetAuthTokenCaches();
 		});
 
-		it('should send an auth token request when auth token does not exist', function(done) {
+		it('should send an auth token request when auth token does not exist', (done) => {
 			window.fetch.returns(
 				Promise.resolve(
 					new Response(
@@ -85,21 +85,21 @@ describe('D2LFetchAuth class internals', function() {
 			);
 
 			d2lFetchAuth._getAuthToken()
-				.then(function(authToken) {
+				.then((authToken) => {
 
-					var req = window.fetch.args[0][0];
+					const req = window.fetch.args[0][0];
 					expect(req.method).to.equal('POST');
 					expect(req.url).to.have.string('/d2l/lp/auth/oauth2/token');
 					expect(req.headers.get('x-csrf-token')).to.equal(xsrfTokenValue);
 					expect(authToken).to.equal(authTokenResponse.body.access_token);
-					req.text().then(function(bodyText) {
-						expect(bodyText).to.equal('scope=' + defaultScope);
+					req.text().then((bodyText) => {
+						expect(bodyText).to.equal(`scope=${defaultScope}`);
 						done();
 					});
 				});
 		});
 
-		it('should send an auth token request when auth token is expired', function(done) {
+		it('should send an auth token request when auth token is expired', (done) => {
 			window.fetch.returns(
 				Promise.resolve(
 					new Response(
@@ -115,21 +115,21 @@ describe('D2LFetchAuth class internals', function() {
 			});
 
 			d2lFetchAuth._getAuthToken()
-				.then(function(authToken) {
+				.then((authToken) => {
 
-					var req = window.fetch.args[0][0];
+					const req = window.fetch.args[0][0];
 					expect(req.method).to.equal('POST');
 					expect(req.url).to.have.string('/d2l/lp/auth/oauth2/token');
 					expect(req.headers.get('x-csrf-token')).to.equal(xsrfTokenValue);
 					expect(authToken).to.equal(authTokenResponse.body.access_token);
-					req.text().then(function(bodyText) {
-						expect(bodyText).to.equal('scope=' + defaultScope);
+					req.text().then((bodyText) => {
+						expect(bodyText).to.equal(`scope=${defaultScope}`);
 						done();
 					});
 				});
 		});
 
-		it('should account for server clock skew when deciding if a token is expired', function() {
+		it('should account for server clock skew when deciding if a token is expired', () => {
 			// put the server ~10 minutes ahead
 			const skew = 10 * 60;
 			setupResponse();
@@ -168,15 +168,15 @@ describe('D2LFetchAuth class internals', function() {
 			}
 		});
 
-		it('should use cached auth token if it exists', function() {
+		it('should use cached auth token if it exists', () => {
 			d2lFetchAuth._cacheToken(defaultScope, authToken);
 			return d2lFetchAuth._getAuthToken()
-				.then(function(token) {
+				.then((token) => {
 					expect(token).to.equal(authToken.access_token);
 				});
 		});
 
-		it('should not use cached tokens after session change', function(done) {
+		it('should not use cached tokens after session change', (done) => {
 			window.fetch.returns(
 				Promise.resolve(
 					new Response(
@@ -186,18 +186,18 @@ describe('D2LFetchAuth class internals', function() {
 				)
 			);
 
-			var alternativeToken = {
+			const alternativeToken = {
 				access_token: 'cool beans',
 				expires_at: Number.MAX_VALUE
 			};
 
 			d2lFetchAuth._cacheToken(defaultScope, alternativeToken);
 			d2lFetchAuth._getAuthToken()
-				.then(function(token) {
+				.then((token) => {
 					expect(token).to.equal(alternativeToken.access_token);
 					d2lFetchAuth._onStorage({ key: 'Session.UserId' });
 					d2lFetchAuth._getAuthToken()
-						.then(function(token) {
+						.then((token) => {
 							expect(token).to.equal(authToken.access_token);
 							done();
 						});
@@ -205,32 +205,32 @@ describe('D2LFetchAuth class internals', function() {
 		});
 	});
 
-	describe('isRelativeUrl', function() {
+	describe('isRelativeUrl', () => {
 
-		it('should treat relative URLs as relative', function() {
-			var isRelative = d2lFetchAuth._isRelativeUrl('/relative/url');
+		it('should treat relative URLs as relative', () => {
+			const isRelative = d2lFetchAuth._isRelativeUrl('/relative/url');
 			expect(isRelative).to.be.true;
 		});
 
-		it('should treat non-relative URLs as non-relative', function() {
-			var isRelative = d2lFetchAuth._isRelativeUrl('http://foo.com/bar');
+		it('should treat non-relative URLs as non-relative', () => {
+			const isRelative = d2lFetchAuth._isRelativeUrl('http://foo.com/bar');
 			expect(isRelative).to.be.false;
 		});
 
 		// IE adds the port (:80) to the inbound URL, which needs to be ignored
-		it('should treat URLs with the same host as current page as relative', function() {
-			var locationStub = sinon.stub(d2lFetchAuth, '_getCurrentLocation')
+		it('should treat URLs with the same host as current page as relative', () => {
+			const locationStub = sinon.stub(d2lFetchAuth, '_getCurrentLocation')
 				.returns({ host: 'foo.com', protocol: 'http:' });
-			var isRelative = d2lFetchAuth._isRelativeUrl('http://foo.com/bar');
+			const isRelative = d2lFetchAuth._isRelativeUrl('http://foo.com/bar');
 			locationStub.restore();
 			expect(isRelative).to.be.true;
 		});
 
 		// IE adds the port (:443) to the inbound URL, which needs to be ignored
-		it('should treat HTTPS URLs with same host as current page as relative', function() {
-			var locationStub = sinon.stub(d2lFetchAuth, '_getCurrentLocation')
+		it('should treat HTTPS URLs with same host as current page as relative', () => {
+			const locationStub = sinon.stub(d2lFetchAuth, '_getCurrentLocation')
 				.returns({ host: 'foo.com', protocol: 'https:' });
-			var isRelative = d2lFetchAuth._isRelativeUrl('https://foo.com/bar');
+			const isRelative = d2lFetchAuth._isRelativeUrl('https://foo.com/bar');
 			locationStub.restore();
 			expect(isRelative).to.be.true;
 		});

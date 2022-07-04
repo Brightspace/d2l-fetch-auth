@@ -1,18 +1,18 @@
 import auth from '../../es6/d2lfetch-auth.js';
 
-var invalidRequestInputs = [
+const invalidRequestInputs = [
 	undefined,
 	null,
 	1,
 	'hello',
 	{},
-	{ whatiam: 'is not a Request'}
+	{ whatiam: 'is not a Request' }
 ];
 
-describe('d2l-fetch-auth', function() {
+describe('d2l-fetch-auth', () => {
 
-	var sandbox,
-		authToken = createTokenForUser('169'),
+	let sandbox;
+	const authToken = createTokenForUser('169'),
 		xsrfTokenKey = 'XSRF.Token',
 		xsrfTokenValue = 'foo',
 		localStorageKey = 'D2L.Fetch.Tokens',
@@ -23,7 +23,7 @@ describe('d2l-fetch-auth', function() {
 
 	function createTokenForUser(userId) {
 		return {
-			access_token: 'part1.' + btoa(JSON.stringify({ sub: userId })) + '.part3',
+			access_token: `part1.${btoa(JSON.stringify({ sub: userId }))}.part3`,
 			expires_at: Number.MAX_VALUE
 		};
 	}
@@ -70,13 +70,13 @@ describe('d2l-fetch-auth', function() {
 			);
 	}
 
-	beforeEach(function() {
+	beforeEach(() => {
 		sandbox = sinon.sandbox.create();
 		setXsrfToken(xsrfTokenValue);
 		sandbox.stub(window, 'fetch');
 	});
 
-	afterEach(function() {
+	afterEach(() => {
 		clearXsrfToken();
 		clearTokenCache();
 		sandbox.restore();
@@ -86,105 +86,105 @@ describe('d2l-fetch-auth', function() {
 		return new Request(path, { headers: headers });
 	}
 
-	it('should create the d2lfetch object if it doesn\'t exist', function() {
+	it('should create the d2lfetch object if it doesn\'t exist', () => {
 		expect(window.d2lfetch).to.be.defined;
 	});
 
-	describe('.auth', function() {
+	describe('.auth', () => {
 
-		it('should be a function on the d2lfetch object', function() {
+		it('should be a function on the d2lfetch object', () => {
 			expect(auth instanceof Function).to.equal(true);
 		});
 
-		invalidRequestInputs.forEach(function(input) {
-			it('should throw a TypeError if it is not passed a Request object', function() {
+		invalidRequestInputs.forEach((input) => {
+			it('should throw a TypeError if it is not passed a Request object', () => {
 				return auth(input)
-					.then((function() { expect.fail(); }), function(err) { expect(err instanceof TypeError).to.equal(true); });
+					.then((() => { expect.fail(); }), (err) => { expect(err instanceof TypeError).to.equal(true); });
 			});
 		});
 
-		it('should not replace an existing authorization header', function() {
-			var token = 'this is a custom token from this do not replace auth header test';
-			var request = new Request('path/to/data', { headers: { authorization: token } });
+		it('should not replace an existing authorization header', () => {
+			const token = 'this is a custom token from this do not replace auth header test';
+			const request = new Request('path/to/data', { headers: { authorization: token } });
 			return auth(request)
-				.then(function(output) {
+				.then((output) => {
 					expect(output.headers.get('Authorization')).to.equal(token);
 				});
 		});
 
-		it('should call the next function if provided', function() {
-			var next = sandbox.stub().returns(Promise.resolve());
+		it('should call the next function if provided', () => {
+			const next = sandbox.stub().returns(Promise.resolve());
 			return auth(getRequest('/path/to/data'), next)
-				.then(function() {
+				.then(() => {
 					expect(next).to.be.called;
 				});
 		});
 
-		it('should return a promise resolved to a request if next is not provided', function() {
-			var request = getRequest('/path/to/data');
+		it('should return a promise resolved to a request if next is not provided', () => {
+			const request = getRequest('/path/to/data');
 			return auth(request)
-				.then(function(output) {
+				.then((output) => {
 					expect(output).to.be.an.instanceOf(Request);
 				});
 		});
 
-		it('should resolve to a request with no auth header when url is relative', function() {
+		it('should resolve to a request with no auth header when url is relative', () => {
 			return auth(getRelativeGETRequest())
-				.then(function(req) {
+				.then((req) => {
 					expect(req.method).to.equal('GET');
 					expect(req.headers.get('authorization')).to.not.be.defined;
 					expect(req.headers.get('x-csrf-token')).to.not.be.defined;
 				});
 		});
 
-		it('should resolve to a request with XSRF header when url is relative', function() {
+		it('should resolve to a request with XSRF header when url is relative', () => {
 			clearXsrfToken();
 			window.fetch
 				.returns(Promise.resolve(
 					new Response(
-						'{ "referrerToken": "' + xsrfTokenValue + '" }'
+						`{ "referrerToken": "${xsrfTokenValue}" }`
 					)
 				));
 
 			return auth(getRelativePUTRequest())
-				.then(function(req) {
+				.then((req) => {
 					expect(req.method).to.equal('PUT');
 					expect(req.headers.get('x-csrf-token')).to.equal(xsrfTokenValue);
 					expect(req.headers.get('accept')).to.equal('application/vnd.siren+json');
 				});
 		});
 
-		it('should resolve to a request with auth header when url is absolute', function() {
+		it('should resolve to a request with auth header when url is absolute', () => {
 			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
-				.then(function(req) {
-					expect(req.headers.get('authorization')).to.equal('Bearer ' + authToken.access_token);
+				.then((req) => {
+					expect(req.headers.get('authorization')).to.equal(`Bearer ${authToken.access_token}`);
 				});
 		});
 
-		it('should include specified headers in the request', function() {
+		it('should include specified headers in the request', () => {
 			return auth(getCustomHeadersGETRequest())
-				.then(function(req) {
+				.then((req) => {
 					expect(req.headers.get('accept')).to.equal('application/vnd.siren+json');
 					expect(req.headers.get('x-my-header')).to.equal('my value');
 				});
 		});
 
-		it('should set the credentials value of the request to same-origin when the url is relative', function() {
+		it('should set the credentials value of the request to same-origin when the url is relative', () => {
 			return auth(getRelativeGETRequest())
-				.then(function(req) {
+				.then((req) => {
 					expect(req.credentials).to.equal('same-origin');
 				});
 		});
 
-		it('should not set the credentials value of the request to same-origin when the url is absolute', function() {
+		it('should not set the credentials value of the request to same-origin when the url is absolute', () => {
 			return auth(getAbsolutePathGETRequest())
-				.then(function(req) {
+				.then((req) => {
 					expect(req.credentials).to.equal('omit');
 				});
 		});
 
-		it('should return rejected promise if XSRF request fails', function(done) {
+		it('should return rejected promise if XSRF request fails', (done) => {
 			clearXsrfToken();
 
 			window.fetch
@@ -201,15 +201,15 @@ describe('d2l-fetch-auth', function() {
 				);
 
 			auth(getAbsolutePathGETRequest())
-				.then(function() {
+				.then(() => {
 					expect.fail();
 				})
-				.catch(function() {
+				.catch(() => {
 					done();
 				});
 		});
 
-		it('should return rejected promise if auth token request fails', function(done) {
+		it('should return rejected promise if auth token request fails', (done) => {
 			window.fetch
 				.withArgs(sinon.match.has('method', 'POST'))
 				.returns(
@@ -224,41 +224,41 @@ describe('d2l-fetch-auth', function() {
 				);
 
 			auth(getAbsolutePathGETRequest())
-				.then(function() {
+				.then(() => {
 					expect.fail();
 				})
-				.catch(function() {
+				.catch(() => {
 					done();
 				});
 		});
 
-		it('should not store auth token in localStorage by default', function() {
+		it('should not store auth token in localStorage by default', () => {
 			setupAuthTokenResponse();
 			return auth(getAbsolutePathGETRequest())
-				.then(function() {
+				.then(() => {
 					const cachedValue = window.localStorage.getItem(localStorageKey);
 					expect(cachedValue).to.be.null;
 				});
 		});
 
-		it('should store auth token in localStorage when asked', function() {
+		it('should store auth token in localStorage when asked', () => {
 			window.localStorage.setItem('Session.UserId', '169');
 			setupAuthTokenResponse();
 			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					const cachedValue = JSON.parse(
-						window.localStorage.getItem(localStorageKey)
-					);
-					expect(cachedValue['*:*:*']).to.eql(authToken);
-				});
+				getAbsolutePathGETRequest(),
+				undefined, {
+					enableTokenCache: true,
+					_resetLocalCache: true
+				}
+			).then(() => {
+				const cachedValue = JSON.parse(
+					window.localStorage.getItem(localStorageKey)
+				);
+				expect(cachedValue['*:*:*']).to.eql(authToken);
+			});
 		});
 
-		it('should not use cached token if it\'s for the wrong user', function() {
+		it('should not use cached token if it\'s for the wrong user', () => {
 			window.localStorage.setItem('Session.UserId', '169');
 			window.localStorage.setItem(
 				localStorageKey,
@@ -270,20 +270,20 @@ describe('d2l-fetch-auth', function() {
 			);
 			setupAuthTokenResponse();
 			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					const expected = JSON.stringify({
-						'*:*:*': createTokenForUser('169')
-					});
-					expect(window.localStorage.getItem(localStorageKey)).to.eql(expected);
+				getAbsolutePathGETRequest(),
+				undefined, {
+					enableTokenCache: true,
+					_resetLocalCache: true
+				}
+			).then(() => {
+				const expected = JSON.stringify({
+					'*:*:*': createTokenForUser('169')
 				});
+				expect(window.localStorage.getItem(localStorageKey)).to.eql(expected);
+			});
 		});
 
-		it('should remove cached token when user changes', function() {
+		it('should remove cached token when user changes', () => {
 			try {
 				new StorageEvent('storage');
 			} catch (e) {
@@ -294,33 +294,33 @@ describe('d2l-fetch-auth', function() {
 			window.localStorage.setItem(localStorageKey, 'bad value');
 			setupAuthTokenResponse();
 			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					var e = new StorageEvent('storage');
-					e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123', window.location.href, window.sessionStorage);
-					window.dispatchEvent(e);
-					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
-				});
+				getAbsolutePathGETRequest(),
+				undefined, {
+					enableTokenCache: true,
+					_resetLocalCache: true
+				}
+			).then(() => {
+				const e = new StorageEvent('storage');
+				e.initStorageEvent('storage', true, true, 'Session.UserId', '169', '123', window.location.href, window.sessionStorage);
+				window.dispatchEvent(e);
+				expect(window.localStorage.getItem(localStorageKey)).to.be.null;
+			});
 		});
 
-		it('should remove cached token when user logs out', function() {
+		it('should remove cached token when user logs out', () => {
 			window.localStorage.setItem('Session.UserId', '169');
 			window.localStorage.setItem(localStorageKey, 'bad value');
 			setupAuthTokenResponse();
 			return auth(
-					getAbsolutePathGETRequest(),
-					undefined, {
-						enableTokenCache: true,
-						_resetLocalCache: true
-					}
-				).then(function() {
-					window.dispatchEvent(new CustomEvent('d2l-logout'));
-					expect(window.localStorage.getItem(localStorageKey)).to.be.null;
-				});
+				getAbsolutePathGETRequest(),
+				undefined, {
+					enableTokenCache: true,
+					_resetLocalCache: true
+				}
+			).then(() => {
+				window.dispatchEvent(new CustomEvent('d2l-logout'));
+				expect(window.localStorage.getItem(localStorageKey)).to.be.null;
+			});
 		});
 
 	});
