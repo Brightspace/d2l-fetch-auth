@@ -1,4 +1,4 @@
-const fetchAuthFramed = require('./dist/d2lfetch-auth-framed.js');
-const fetchAuth = require('./dist/d2lfetch-auth.js');
+import fetchAuth from './es6/d2lfetch-auth.js';
+import fetchAuthFramed from './es6/d2lfetch-auth-framed.js';
 
-module.exports = { fetchAuthFramed, fetchAuth };
+export { fetchAuthFramed, fetchAuth };
