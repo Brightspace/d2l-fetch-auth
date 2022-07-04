@@ -28,8 +28,7 @@ node_modules/
 dist/
 es6/
 test/dist/
-test/coverage/
-coverage/
+package-lock.json
 
 
 ### Windows ###

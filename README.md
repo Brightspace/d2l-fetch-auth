@@ -1,30 +1,24 @@
 # d2l-fetch-auth
+
+[![NPM version](https://img.shields.io/npm/v/d2l-fetch-auth.svg)](https://www.npmjs.org/package/d2l-fetch-auth)
+
 Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch.
 
-## Setup
+## Installation
 
-```sh
-npm ci
-```
+Install from NPM:
 
-## Build
-
-```sh
-npm run build
+```shell
+npm install d2l-fetch-auth
 ```
 
 ## Usage
 
 Reference the script in your html after your reference to `d2l-fetch` (see [here](https://github.com/Brightspace/d2l-fetch) for details on d2l-fetch):
 
-Install `d2l-fetch-auth` via npm:
-```sh
-npm install Brightspace/d2l-fetch-auth
-```
-
 ```html
 <script type="module">
-import auth from 'd2l-fetch-auth/dist/d2l-fetch-auth.js';
+import auth from 'd2l-fetch-auth/d2l-fetch-auth.js';
 </script>
 ```
 
@@ -32,7 +26,7 @@ Alternatively, if you are making requests from within the context of an iFramed 
 
 ```html
 <script type="module">
-import auth from 'd2l-fetch-auth/dist/d2l-fetch-auth.js';
+import auth from 'd2l-fetch-auth/d2l-fetch-auth-framed.js';
 </script>
 ```
 
@@ -45,19 +39,10 @@ Install the `auth` middleware to d2lfetch via the `use` function and then start 
 ```js
 d2lfetch.use({name: 'auth', fn: auth});
 
-d2lfetch.fetch(new Request('http://example.com/api/entity/1'))
-	.then(function(response) {
-		// do something with the response
-	});
+const response = await d2lfetch.fetch(
+	new Request('http://example.com/api/entity/1')
+);
 ```
-
-## Browser compatibility
-
-`d2l-fetch-auth` makes use of a javascript feature that is not yet fully supported across all modern browsers: [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise). If you need to support browsers that do not yet implement this feature you will need to include polyfills for this functionality.
-
-We recommend:
-
-* [promise-polyfill](https://github.com/PolymerLabs/promise-polyfill/)
 
 ## Versioning & Releasing
 

@@ -1,4 +1,6 @@
 import { D2LFetchAuthFramed } from '../dist/d2lfetch-auth.framedInternals.js';
+import { expect } from '@open-wc/testing';
+import sinon from 'sinon';
 
 describe('D2LFetchAuthFramed class internals', () => {
 	let d2lFetchAuthFramed,
@@ -10,7 +12,7 @@ describe('D2LFetchAuthFramed class internals', () => {
 	}
 
 	beforeEach(() => {
-		sandbox = sinon.sandbox.create();
+		sandbox = sinon.createSandbox();
 		d2lFetchAuthFramed = new D2LFetchAuthFramed();
 		sandbox.stub(window, 'fetch');
 		sandbox.stub(d2lFetchAuthFramed, '_getToken').returns(Promise.resolve(tokenValue));
