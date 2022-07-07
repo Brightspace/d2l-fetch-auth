@@ -1,6 +1,7 @@
 {
   "version": "1.5.3",
   "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
+  "type": "module",
   "keywords": [
     "fetch",
     "middleware",
@@ -8,14 +9,12 @@
   ],
   "name": "d2l-fetch-auth",
   "main": "index.js",
-  "module": "index.es6.js",
   "author": "D2L Corporation",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "rollup -c rollup/rollup.config.js",
+    "build": "rollup -c rollup.config.js",
     "lint": "eslint . --ext .js",
     "prepare": "npm run build",
-    "pretest": "rollup -c rollup/rollup.test.config.js",
     "test": "npm run lint &&  npm run test:headless",
     "test:headless": "web-test-runner --files ./test/**/*.test.js --node-resolve",
     "test:headless:watch": "web-test-runner --files ./test/**/*.test.js --node-resolve --watch"
@@ -24,6 +23,7 @@
     "@babel/core": "^7",
     "@babel/eslint-parser": "^7",
     "@open-wc/testing": "^3",
+    "@rollup/plugin-node-resolve": "^13",
     "@web/test-runner": "^0.13",
     "eslint": "^8",
     "eslint-config-brightspace": "^0.18",
@@ -31,22 +31,17 @@
     "eslint-plugin-import": "^2",
     "eslint-plugin-lit": "^1",
     "eslint-plugin-sort-class-members": "^1",
-    "rollup": "^0.67.1",
-    "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-json": "^3.1.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup": "^2",
     "sinon": "^14"
   },
   "dependencies": {
-    "frau-jwt": "^2.0.3"
+    "frau-jwt": "^3"
   },
   "files": [
-    "dist/",
     "es6/",
     "src/",
     "d2l-fetch-auth-framed.js",
     "d2l-fetch-auth.js",
-    "index.es6.js",
     "index.js"
   ]
 }

@@ -1,4 +1,4 @@
-import { D2LFetchAuthFramed } from '../dist/d2lfetch-auth.framedInternals.js';
+import { D2LFetchAuthFramed } from '../../src/framed/d2lfetch-auth-framed.js';
 import { expect } from '@open-wc/testing';
 import sinon from 'sinon';
 

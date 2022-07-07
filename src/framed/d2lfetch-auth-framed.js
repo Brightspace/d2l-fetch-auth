@@ -1,4 +1,4 @@
-import { default as jwt } from 'frau-jwt/framed';
+import jwt from 'frau-jwt/framed';
 
 export class D2LFetchAuthFramed {
 

@@ -15,8 +15,6 @@ jobs:
           npm install
           npm install @web/test-runner-playwright --no-save
           npx playwright install-deps
-      - name: PreTest
-        run: npm run pretest
       - name: Lint (JavaScript)
         run: npm run lint
       - name: Unit Tests (cross-browser)
