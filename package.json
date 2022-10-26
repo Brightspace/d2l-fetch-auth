@@ -16,8 +16,8 @@
     "lint": "eslint . --ext .js",
     "prepare": "npm run build",
     "test": "npm run lint &&  npm run test:headless",
-    "test:headless": "web-test-runner --files ./test/**/*.test.js --node-resolve",
-    "test:headless:watch": "web-test-runner --files ./test/**/*.test.js --node-resolve --watch"
+    "test:headless": "web-test-runner --files \"./test/**/*.test.js\" --node-resolve",
+    "test:headless:watch": "web-test-runner --files \"./test/**/*.test.js\" --node-resolve --watch"
   },
   "devDependencies": {
     "@babel/core": "^7",
