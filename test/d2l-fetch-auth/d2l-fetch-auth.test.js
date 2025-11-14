@@ -288,7 +288,7 @@ describe('d2l-fetch-auth', () => {
 		it('should remove cached token when user changes', () => {
 			try {
 				new StorageEvent('storage');
-			} catch (e) {
+			} catch {
 				// Edge doesn't like custom StorageEvents, so skip the test for now
 				return;
 			}
