@@ -67,7 +67,7 @@ export class D2LFetchAuth {
 			const currentTime = this._clock();
 
 			D2L_FETCH_CLOCK_SKEW = serverTime - currentTime;
-		} catch (e) { /* nowhere good to log */ }
+		} catch { /* nowhere good to log */ }
 	}
 
 	_cacheToken(scope, token) {
@@ -177,7 +177,7 @@ export class D2LFetchAuth {
 		let xsrfToken;
 		try {
 			xsrfToken = window.localStorage.getItem('XSRF.Token');
-		} catch (e) {
+		} catch {
 			// likely private browsing mode, continue anyway
 		}
 
@@ -199,7 +199,7 @@ export class D2LFetchAuth {
 			.then((responseBody) => {
 				try {
 					window.localStorage.setItem('XSRF.Token', responseBody.referrerToken);
-				} catch (e) {
+				} catch {
 					// likely private browsing mode, continue anyway
 				}
 				return responseBody.referrerToken;
@@ -237,7 +237,7 @@ export class D2LFetchAuth {
 			window.localStorage.setItem('supported', '1');
 			window.localStorage.removeItem('supported');
 			return true;
-		} catch (error) {
+		} catch {
 			return false;
 		}
 	}
@@ -335,7 +335,7 @@ export class D2LFetchAuth {
 			if (storageVal && storageVal[scope]) {
 				return storageVal[scope];
 			}
-		} catch (e) {
+		} catch {
 			// token in localStorage was invalid somehow
 		}
 		return null;
@@ -350,7 +350,7 @@ export class D2LFetchAuth {
 			const decoded = JSON.parse(atob(parts[1]));
 			const userId = decoded.sub;
 			return userId;
-		} catch (e) {
+		} catch {
 			return null;
 		}
 
