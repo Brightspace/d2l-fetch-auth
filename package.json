@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Provides a middleware function for wrapping a window.Request object with d2l authentication for use with d2l-fetch",
   "type": "module",
   "keywords": [
