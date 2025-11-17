@@ -22,10 +22,10 @@
     "@babel/core": "^7",
     "@babel/eslint-parser": "^7",
     "@brightspace-ui/testing": "^1",
-    "@rollup/plugin-node-resolve": "^13",
+    "@rollup/plugin-node-resolve": "^16",
     "eslint": "^9",
     "eslint-config-brightspace": "^2",
-    "rollup": "^2",
+    "rollup": "^4",
     "sinon": "^21"
   },
   "dependencies": {
