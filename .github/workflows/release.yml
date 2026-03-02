@@ -18,6 +18,10 @@ jobs:
         uses: Brightspace/setup-node@main
         with:
           node-version-file: .nvmrc
+      - name: Install dependencies
+        run: npm i
+      - name: Build
+        run: npm run build
       - name: Semantic Release
         uses: BrightspaceUI/actions/semantic-release@main
         with:
