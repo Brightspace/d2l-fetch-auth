@@ -36,5 +36,8 @@
     "d2l-fetch-auth-framed.js",
     "d2l-fetch-auth.js",
     "index.js"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
